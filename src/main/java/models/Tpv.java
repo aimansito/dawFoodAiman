@@ -64,7 +64,7 @@ public class Tpv implements Serializable {
         this.idTPV = idTPV;
     }
 
-    public Tpv(Integer idTPV, String ubicacion, Date fechaHora, String contraseña) {
+    public Tpv(String ubicacion, Date fechaHora, String contraseña) {
         this.idTPV = idTPV;
         this.ubicacion = ubicacion;
         this.fechaHora = fechaHora;

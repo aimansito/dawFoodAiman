@@ -15,4 +15,7 @@ public class Controladora {
     public void crearTPV(Tpv tpv){
         c1.crearTPV(tpv);
     }
+    public void insertarTPV(Tpv tpv){
+        c1.insertarTPV(tpv);
+    }
 }

@@ -18,4 +18,8 @@ public class ControladoraPersistencia {
     public void crearTPV(Tpv tpv) {
         tpv1.create(tpv);
     }
+
+    public void insertarTPV(Tpv tpv) {
+        
+    }
 }
