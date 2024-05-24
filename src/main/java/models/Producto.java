@@ -52,9 +52,8 @@ public class Producto implements Serializable {
     @Basic(optional = false)
     @Column(name = "precio")
     private BigDecimal precio;
-    @Basic(optional = false)
     @Column(name = "stock")
-    private int stock;
+    private Integer stock;
     @Basic(optional = false)
     @Column(name = "descripcion")
     private String descripcion;
@@ -71,11 +70,10 @@ public class Producto implements Serializable {
         this.idProducto = idProducto;
     }
 
-    public Producto(Integer idProducto, String iva, BigDecimal precio, int stock, String descripcion) {
+    public Producto(Integer idProducto, String iva, BigDecimal precio, String descripcion) {
         this.idProducto = idProducto;
         this.iva = iva;
         this.precio = precio;
-        this.stock = stock;
         this.descripcion = descripcion;
     }
 
@@ -103,11 +101,11 @@ public class Producto implements Serializable {
         this.precio = precio;
     }
 
-    public int getStock() {
+    public Integer getStock() {
         return stock;
     }
 
-    public void setStock(int stock) {
+    public void setStock(Integer stock) {
         this.stock = stock;
     }
 
@@ -158,7 +156,7 @@ public class Producto implements Serializable {
 
     @Override
     public String toString() {
-        return "controllers.Producto[ idProducto=" + idProducto + " ]";
+        return "models.Producto[ idProducto=" + idProducto + " ]";
     }
     
 }

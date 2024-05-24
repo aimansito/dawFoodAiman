@@ -149,7 +149,7 @@ public class Ticket implements Serializable {
 
     @Override
     public String toString() {
-        return "controllers.Ticket[ idTicket=" + idTicket + " ]";
+        return "models.Ticket[ idTicket=" + idTicket + " ]";
     }
     
 }

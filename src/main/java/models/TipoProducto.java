@@ -29,23 +29,23 @@ import javax.xml.bind.annotation.XmlTransient;
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "TipoProducto.findAll", query = "SELECT t FROM TipoProducto t"),
-    @NamedQuery(name = "TipoProducto.findByTipoCat", query = "SELECT t FROM TipoProducto t WHERE t.tipoCat = :tipoCat"),
     @NamedQuery(name = "TipoProducto.findByCodTipoProducto", query = "SELECT t FROM TipoProducto t WHERE t.codTipoProducto = :codTipoProducto"),
-    @NamedQuery(name = "TipoProducto.findBySubCategorias", query = "SELECT t FROM TipoProducto t WHERE t.subCategorias = :subCategorias")})
+    @NamedQuery(name = "TipoProducto.findByNomCat", query = "SELECT t FROM TipoProducto t WHERE t.nomCat = :nomCat"),
+    @NamedQuery(name = "TipoProducto.findByTipoProdDescripcion", query = "SELECT t FROM TipoProducto t WHERE t.tipoProdDescripcion = :tipoProdDescripcion")})
 public class TipoProducto implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    @Basic(optional = false)
-    @Column(name = "tipoCat")
-    private int tipoCat;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "codTipoProducto")
     private Integer codTipoProducto;
     @Basic(optional = false)
-    @Column(name = "subCategorias")
-    private int subCategorias;
+    @Column(name = "nomCat")
+    private String nomCat;
+    @Basic(optional = false)
+    @Column(name = "tipoProdDescripcion")
+    private String tipoProdDescripcion;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "codTipoProducto")
     private Collection<Producto> productoCollection;
 
@@ -56,18 +56,10 @@ public class TipoProducto implements Serializable {
         this.codTipoProducto = codTipoProducto;
     }
 
-    public TipoProducto(Integer codTipoProducto, int tipoCat, int subCategorias) {
+    public TipoProducto(Integer codTipoProducto, String nomCat, String tipoProdDescripcion) {
         this.codTipoProducto = codTipoProducto;
-        this.tipoCat = tipoCat;
-        this.subCategorias = subCategorias;
-    }
-
-    public int getTipoCat() {
-        return tipoCat;
-    }
-
-    public void setTipoCat(int tipoCat) {
-        this.tipoCat = tipoCat;
+        this.nomCat = nomCat;
+        this.tipoProdDescripcion = tipoProdDescripcion;
     }
 
     public Integer getCodTipoProducto() {
@@ -78,12 +70,20 @@ public class TipoProducto implements Serializable {
         this.codTipoProducto = codTipoProducto;
     }
 
-    public int getSubCategorias() {
-        return subCategorias;
+    public String getNomCat() {
+        return nomCat;
     }
 
-    public void setSubCategorias(int subCategorias) {
-        this.subCategorias = subCategorias;
+    public void setNomCat(String nomCat) {
+        this.nomCat = nomCat;
+    }
+
+    public String getTipoProdDescripcion() {
+        return tipoProdDescripcion;
+    }
+
+    public void setTipoProdDescripcion(String tipoProdDescripcion) {
+        this.tipoProdDescripcion = tipoProdDescripcion;
     }
 
     @XmlTransient
@@ -117,7 +117,7 @@ public class TipoProducto implements Serializable {
 
     @Override
     public String toString() {
-        return "controllers.TipoProducto[ codTipoProducto=" + codTipoProducto + " ]";
+        return "models.TipoProducto[ codTipoProducto=" + codTipoProducto + " ]";
     }
     
 }

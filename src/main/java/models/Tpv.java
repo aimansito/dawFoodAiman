@@ -34,7 +34,8 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "Tpv.findAll", query = "SELECT t FROM Tpv t"),
     @NamedQuery(name = "Tpv.findByIdTPV", query = "SELECT t FROM Tpv t WHERE t.idTPV = :idTPV"),
     @NamedQuery(name = "Tpv.findByUbicacion", query = "SELECT t FROM Tpv t WHERE t.ubicacion = :ubicacion"),
-    @NamedQuery(name = "Tpv.findByFechaHora", query = "SELECT t FROM Tpv t WHERE t.fechaHora = :fechaHora")})
+    @NamedQuery(name = "Tpv.findByFechaHora", query = "SELECT t FROM Tpv t WHERE t.fechaHora = :fechaHora"),
+    @NamedQuery(name = "Tpv.findByContrase\u00f1a", query = "SELECT t FROM Tpv t WHERE t.contrase\u00f1a = :contrase\u00f1a")})
 public class Tpv implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -50,6 +51,9 @@ public class Tpv implements Serializable {
     @Column(name = "fechaHora")
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaHora;
+    @Basic(optional = false)
+    @Column(name = "contrase\u00f1a")
+    private String contraseña;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "idTPV")
     private Collection<Ticket> ticketCollection;
 
@@ -60,10 +64,11 @@ public class Tpv implements Serializable {
         this.idTPV = idTPV;
     }
 
-    public Tpv(Integer idTPV, String ubicacion, Date fechaHora) {
+    public Tpv(Integer idTPV, String ubicacion, Date fechaHora, String contraseña) {
         this.idTPV = idTPV;
         this.ubicacion = ubicacion;
         this.fechaHora = fechaHora;
+        this.contraseña = contraseña;
     }
 
     public Integer getIdTPV() {
@@ -88,6 +93,14 @@ public class Tpv implements Serializable {
 
     public void setFechaHora(Date fechaHora) {
         this.fechaHora = fechaHora;
+    }
+
+    public String getContraseña() {
+        return contraseña;
+    }
+
+    public void setContraseña(String contraseña) {
+        this.contraseña = contraseña;
     }
 
     @XmlTransient
@@ -121,7 +134,7 @@ public class Tpv implements Serializable {
 
     @Override
     public String toString() {
-        return "controllers.Tpv[ idTPV=" + idTPV + " ]";
+        return "models.Tpv[ idTPV=" + idTPV + " ]";
     }
     
 }
