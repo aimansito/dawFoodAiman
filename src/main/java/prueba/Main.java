@@ -4,6 +4,7 @@
  */
 package prueba;
 
+import controllers.TpvJpaController;
 import java.util.Date;
 import models.Controladora;
 import models.Tpv;
@@ -14,11 +15,18 @@ import models.Tpv;
  */
 public class Main {
 
+    private static final TpvJpaController tpv = new TpvJpaController();
+
     public static void main(String[] args) {
-
-        Controladora c1 = new Controladora();
-
         Date fechaHora = new Date("2024-05-24T00:00:00");
-        Tpv t1 = new Tpv();
+        Tpv t1 = new Tpv("España", fechaHora, "1234");
     }
+
+    public static void mostrarTpv() {
+        System.out.println("--------- Listado de Vehículos -------------");
+        tpv.findTpvEntities().forEach(System.out::println);
+        System.out.println("--------------------------------------------");
+
+    }
+
 }
