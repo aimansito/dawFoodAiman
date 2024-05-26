@@ -18,6 +18,7 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
+import javax.swing.JOptionPane;
 import models.Tpv;
 
 /**
@@ -35,7 +36,7 @@ public class TpvJpaController implements Serializable {
     public TpvJpaController() {
         emf = Persistence.createEntityManagerFactory("dawFoodAimanXML");
     }
-    
+
     private EntityManagerFactory emf = null;
 
     public EntityManager getEntityManager() {
@@ -50,23 +51,35 @@ public class TpvJpaController implements Serializable {
         try {
             em = getEntityManager();
             em.getTransaction().begin();
-            Collection<Ticket> attachedTicketCollection = new ArrayList<Ticket>();
-            for (Ticket ticketCollectionTicketToAttach : tpv.getTicketCollection()) {
-                ticketCollectionTicketToAttach = em.getReference(ticketCollectionTicketToAttach.getClass(), ticketCollectionTicketToAttach.getIdTicket());
-                attachedTicketCollection.add(ticketCollectionTicketToAttach);
-            }
-            tpv.setTicketCollection(attachedTicketCollection);
-            em.persist(tpv);
-            for (Ticket ticketCollectionTicket : tpv.getTicketCollection()) {
-                Tpv oldIdTPVOfTicketCollectionTicket = ticketCollectionTicket.getIdTPV();
-                ticketCollectionTicket.setIdTPV(tpv);
-                ticketCollectionTicket = em.merge(ticketCollectionTicket);
-                if (oldIdTPVOfTicketCollectionTicket != null) {
-                    oldIdTPVOfTicketCollectionTicket.getTicketCollection().remove(ticketCollectionTicket);
-                    oldIdTPVOfTicketCollectionTicket = em.merge(oldIdTPVOfTicketCollectionTicket);
+
+            // Verificar si ya existe un TPV con la misma ubicación
+            Query query = em.createQuery("SELECT t FROM Tpv t WHERE t.ubicacion = :ubicacion");
+            query.setParameter("ubicacion", tpv.getUbicacion());
+            List<Tpv> existingTPVs = query.getResultList();
+
+            if (!existingTPVs.isEmpty()) {
+                // Si ya existe un TPV con la misma ubicación, no se insertan los datos
+                JOptionPane.showMessageDialog(null, "Ya existe un TPV en esta ubicación");
+            } else {
+                // Continuar con la inserción del nuevo TPV
+                Collection<Ticket> attachedTicketCollection = new ArrayList<Ticket>();
+                for (Ticket ticketCollectionTicketToAttach : tpv.getTicketCollection()) {
+                    ticketCollectionTicketToAttach = em.getReference(ticketCollectionTicketToAttach.getClass(), ticketCollectionTicketToAttach.getIdTicket());
+                    attachedTicketCollection.add(ticketCollectionTicketToAttach);
                 }
+                tpv.setTicketCollection(attachedTicketCollection);
+                em.persist(tpv);
+                for (Ticket ticketCollectionTicket : tpv.getTicketCollection()) {
+                    Tpv oldIdTPVOfTicketCollectionTicket = ticketCollectionTicket.getIdTPV();
+                    ticketCollectionTicket.setIdTPV(tpv);
+                    ticketCollectionTicket = em.merge(ticketCollectionTicket);
+                    if (oldIdTPVOfTicketCollectionTicket != null) {
+                        oldIdTPVOfTicketCollectionTicket.getTicketCollection().remove(ticketCollectionTicket);
+                        oldIdTPVOfTicketCollectionTicket = em.merge(oldIdTPVOfTicketCollectionTicket);
+                    }
+                }
+                em.getTransaction().commit();
             }
-            em.getTransaction().commit();
         } finally {
             if (em != null) {
                 em.close();
@@ -207,5 +220,5 @@ public class TpvJpaController implements Serializable {
             em.close();
         }
     }
-    
+
 }

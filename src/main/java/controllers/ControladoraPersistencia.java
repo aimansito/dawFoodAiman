@@ -1,5 +1,7 @@
 package controllers;
 
+import java.util.ArrayList;
+import models.Producto;
 import models.Tpv;
 
 /*
@@ -14,7 +16,16 @@ import models.Tpv;
  */
 public class ControladoraPersistencia {
     TpvJpaController tpv1 = new TpvJpaController();
+    ProductoJpaController prod = new ProductoJpaController();
 
+    public ArrayList<Producto> leerProductos(){
+        ArrayList<Producto> productos = new ArrayList<>();
+        
+        productos = (ArrayList<Producto>) prod.findProductoEntities();
+        
+        return productos;
+    }
+    
     public void crearTPV(Tpv tpv) {
         tpv1.create(tpv);
     }

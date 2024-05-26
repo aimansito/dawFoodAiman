@@ -82,67 +82,20 @@ public class ProductoJpaController implements Serializable {
             }
         }
     }
-
-    public void edit(Producto producto) throws IllegalOrphanException, NonexistentEntityException, Exception {
+    
+    public void edit(Producto producto) throws NonexistentEntityException, Exception {
         EntityManager em = null;
         try {
             em = getEntityManager();
             em.getTransaction().begin();
-            Producto persistentProducto = em.find(Producto.class, producto.getIdProducto());
-            TipoProducto codTipoProductoOld = persistentProducto.getCodTipoProducto();
-            TipoProducto codTipoProductoNew = producto.getCodTipoProducto();
-            Collection<DetalleTicket> detalleTicketCollectionOld = persistentProducto.getDetalleTicketCollection();
-            Collection<DetalleTicket> detalleTicketCollectionNew = producto.getDetalleTicketCollection();
-            List<String> illegalOrphanMessages = null;
-            for (DetalleTicket detalleTicketCollectionOldDetalleTicket : detalleTicketCollectionOld) {
-                if (!detalleTicketCollectionNew.contains(detalleTicketCollectionOldDetalleTicket)) {
-                    if (illegalOrphanMessages == null) {
-                        illegalOrphanMessages = new ArrayList<String>();
-                    }
-                    illegalOrphanMessages.add("You must retain DetalleTicket " + detalleTicketCollectionOldDetalleTicket + " since its idProducto field is not nullable.");
-                }
-            }
-            if (illegalOrphanMessages != null) {
-                throw new IllegalOrphanException(illegalOrphanMessages);
-            }
-            if (codTipoProductoNew != null) {
-                codTipoProductoNew = em.getReference(codTipoProductoNew.getClass(), codTipoProductoNew.getCodTipoProducto());
-                producto.setCodTipoProducto(codTipoProductoNew);
-            }
-            Collection<DetalleTicket> attachedDetalleTicketCollectionNew = new ArrayList<DetalleTicket>();
-            for (DetalleTicket detalleTicketCollectionNewDetalleTicketToAttach : detalleTicketCollectionNew) {
-                detalleTicketCollectionNewDetalleTicketToAttach = em.getReference(detalleTicketCollectionNewDetalleTicketToAttach.getClass(), detalleTicketCollectionNewDetalleTicketToAttach.getCantidadProducto());
-                attachedDetalleTicketCollectionNew.add(detalleTicketCollectionNewDetalleTicketToAttach);
-            }
-            detalleTicketCollectionNew = attachedDetalleTicketCollectionNew;
-            producto.setDetalleTicketCollection(detalleTicketCollectionNew);
             producto = em.merge(producto);
-            if (codTipoProductoOld != null && !codTipoProductoOld.equals(codTipoProductoNew)) {
-                codTipoProductoOld.getProductoCollection().remove(producto);
-                codTipoProductoOld = em.merge(codTipoProductoOld);
-            }
-            if (codTipoProductoNew != null && !codTipoProductoNew.equals(codTipoProductoOld)) {
-                codTipoProductoNew.getProductoCollection().add(producto);
-                codTipoProductoNew = em.merge(codTipoProductoNew);
-            }
-            for (DetalleTicket detalleTicketCollectionNewDetalleTicket : detalleTicketCollectionNew) {
-                if (!detalleTicketCollectionOld.contains(detalleTicketCollectionNewDetalleTicket)) {
-                    Producto oldIdProductoOfDetalleTicketCollectionNewDetalleTicket = detalleTicketCollectionNewDetalleTicket.getIdProducto();
-                    detalleTicketCollectionNewDetalleTicket.setIdProducto(producto);
-                    detalleTicketCollectionNewDetalleTicket = em.merge(detalleTicketCollectionNewDetalleTicket);
-                    if (oldIdProductoOfDetalleTicketCollectionNewDetalleTicket != null && !oldIdProductoOfDetalleTicketCollectionNewDetalleTicket.equals(producto)) {
-                        oldIdProductoOfDetalleTicketCollectionNewDetalleTicket.getDetalleTicketCollection().remove(detalleTicketCollectionNewDetalleTicket);
-                        oldIdProductoOfDetalleTicketCollectionNewDetalleTicket = em.merge(oldIdProductoOfDetalleTicketCollectionNewDetalleTicket);
-                    }
-                }
-            }
             em.getTransaction().commit();
         } catch (Exception ex) {
             String msg = ex.getLocalizedMessage();
             if (msg == null || msg.length() == 0) {
                 Integer id = producto.getIdProducto();
                 if (findProducto(id) == null) {
-                    throw new NonexistentEntityException("The producto with id " + id + " no longer exists.");
+                    throw new NonexistentEntityException("The facturas with id " + id + " no longer exists.");
                 }
             }
             throw ex;
@@ -152,6 +105,76 @@ public class ProductoJpaController implements Serializable {
             }
         }
     }
+
+//    public void edit(Producto producto) throws IllegalOrphanException, NonexistentEntityException, Exception {
+//        EntityManager em = null;
+//        try {
+//            em = getEntityManager();
+//            em.getTransaction().begin();
+//            Producto persistentProducto = em.find(Producto.class, producto.getIdProducto());
+//            TipoProducto codTipoProductoOld = persistentProducto.getCodTipoProducto();
+//            TipoProducto codTipoProductoNew = producto.getCodTipoProducto();
+//            Collection<DetalleTicket> detalleTicketCollectionOld = persistentProducto.getDetalleTicketCollection();
+//            Collection<DetalleTicket> detalleTicketCollectionNew = producto.getDetalleTicketCollection();
+//            List<String> illegalOrphanMessages = null;
+//            for (DetalleTicket detalleTicketCollectionOldDetalleTicket : detalleTicketCollectionOld) {
+//                if (!detalleTicketCollectionNew.contains(detalleTicketCollectionOldDetalleTicket)) {
+//                    if (illegalOrphanMessages == null) {
+//                        illegalOrphanMessages = new ArrayList<String>();
+//                    }
+//                    illegalOrphanMessages.add("You must retain DetalleTicket " + detalleTicketCollectionOldDetalleTicket + " since its idProducto field is not nullable.");
+//                }
+//            }
+//            if (illegalOrphanMessages != null) {
+//                throw new IllegalOrphanException(illegalOrphanMessages);
+//            }
+//            if (codTipoProductoNew != null) {
+//                codTipoProductoNew = em.getReference(codTipoProductoNew.getClass(), codTipoProductoNew.getCodTipoProducto());
+//                producto.setCodTipoProducto(codTipoProductoNew);
+//            }
+//            Collection<DetalleTicket> attachedDetalleTicketCollectionNew = new ArrayList<DetalleTicket>();
+//            for (DetalleTicket detalleTicketCollectionNewDetalleTicketToAttach : detalleTicketCollectionNew) {
+//                detalleTicketCollectionNewDetalleTicketToAttach = em.getReference(detalleTicketCollectionNewDetalleTicketToAttach.getClass(), detalleTicketCollectionNewDetalleTicketToAttach.getCantidadProducto());
+//                attachedDetalleTicketCollectionNew.add(detalleTicketCollectionNewDetalleTicketToAttach);
+//            }
+//            detalleTicketCollectionNew = attachedDetalleTicketCollectionNew;
+//            producto.setDetalleTicketCollection(detalleTicketCollectionNew);
+//            producto = em.merge(producto);
+//            if (codTipoProductoOld != null && !codTipoProductoOld.equals(codTipoProductoNew)) {
+//                codTipoProductoOld.getProductoCollection().remove(producto);
+//                codTipoProductoOld = em.merge(codTipoProductoOld);
+//            }
+//            if (codTipoProductoNew != null && !codTipoProductoNew.equals(codTipoProductoOld)) {
+//                codTipoProductoNew.getProductoCollection().add(producto);
+//                codTipoProductoNew = em.merge(codTipoProductoNew);
+//            }
+//            for (DetalleTicket detalleTicketCollectionNewDetalleTicket : detalleTicketCollectionNew) {
+//                if (!detalleTicketCollectionOld.contains(detalleTicketCollectionNewDetalleTicket)) {
+//                    Producto oldIdProductoOfDetalleTicketCollectionNewDetalleTicket = detalleTicketCollectionNewDetalleTicket.getIdProducto();
+//                    detalleTicketCollectionNewDetalleTicket.setIdProducto(producto);
+//                    detalleTicketCollectionNewDetalleTicket = em.merge(detalleTicketCollectionNewDetalleTicket);
+//                    if (oldIdProductoOfDetalleTicketCollectionNewDetalleTicket != null && !oldIdProductoOfDetalleTicketCollectionNewDetalleTicket.equals(producto)) {
+//                        oldIdProductoOfDetalleTicketCollectionNewDetalleTicket.getDetalleTicketCollection().remove(detalleTicketCollectionNewDetalleTicket);
+//                        oldIdProductoOfDetalleTicketCollectionNewDetalleTicket = em.merge(oldIdProductoOfDetalleTicketCollectionNewDetalleTicket);
+//                    }
+//                }
+//            }
+//            em.getTransaction().commit();
+//        } catch (Exception ex) {
+//            String msg = ex.getLocalizedMessage();
+//            if (msg == null || msg.length() == 0) {
+//                Integer id = producto.getIdProducto();
+//                if (findProducto(id) == null) {
+//                    throw new NonexistentEntityException("The producto with id " + id + " no longer exists.");
+//                }
+//            }
+//            throw ex;
+//        } finally {
+//            if (em != null) {
+//                em.close();
+//            }
+//        }
+//    }
 
     public void destroy(Integer id) throws IllegalOrphanException, NonexistentEntityException {
         EntityManager em = null;

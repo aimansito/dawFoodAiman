@@ -70,11 +70,21 @@ public class Producto implements Serializable {
         this.idProducto = idProducto;
     }
 
-    public Producto(Integer idProducto, String iva, BigDecimal precio, String descripcion) {
-        this.idProducto = idProducto;
+    public Producto(String iva, BigDecimal precio, int stock, String descripcion, TipoProducto codTipoProducto) {
         this.iva = iva;
         this.precio = precio;
+        this.stock = stock;
         this.descripcion = descripcion;
+        this.codTipoProducto = codTipoProducto;
+    }
+    
+    public Producto(int id,String iva, BigDecimal precio, int stock, String descripcion, TipoProducto codTipoProducto) {
+        this.idProducto = id;
+        this.iva = iva;
+        this.precio = precio;
+        this.stock = stock;
+        this.descripcion = descripcion;
+        this.codTipoProducto = codTipoProducto;
     }
 
     public Integer getIdProducto() {
@@ -156,7 +166,19 @@ public class Producto implements Serializable {
 
     @Override
     public String toString() {
-        return "models.Producto[ idProducto=" + idProducto + " ]";
+        StringBuilder sb = new StringBuilder();
+        sb.append("Producto{");
+        sb.append("idProducto=").append(idProducto);
+        sb.append(", iva=").append(iva);
+        sb.append(", precio=").append(precio);
+        sb.append(", stock=").append(stock);
+        sb.append(", descripcion=").append(descripcion);
+        sb.append(", codTipoProducto=").append(codTipoProducto);
+        sb.append(", detalleTicketCollection=").append(detalleTicketCollection);
+        sb.append('}');
+        return sb.toString();
     }
+
+    
     
 }

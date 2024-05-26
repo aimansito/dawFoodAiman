@@ -18,6 +18,7 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
+import javax.persistence.TypedQuery;
 import models.TipoProducto;
 
 /**
@@ -206,6 +207,19 @@ public class TipoProductoJpaController implements Serializable {
         } finally {
             em.close();
         }
+    }  
+     // Método para obtener TipoProducto por nombre
+     public TipoProducto getTipoProductoPorNombre(String nombre) {
+        EntityManager em = getEntityManager();
+        try {
+            TypedQuery<TipoProducto> query = em.createQuery(
+                "SELECT t FROM TipoProducto t WHERE t.nomCat = :nombre", TipoProducto.class);
+            query.setParameter("nombre", nombre);
+            List<TipoProducto> resultados = query.getResultList();
+            return resultados.isEmpty() ? null : resultados.get(0);
+        } finally {
+            em.close();
+        }
     }
-    
+
 }

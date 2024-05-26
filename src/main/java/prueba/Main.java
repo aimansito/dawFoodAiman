@@ -4,8 +4,14 @@
  */
 package prueba;
 
+import controllers.ProductoJpaController;
 import controllers.TpvJpaController;
+import controllers.exceptions.IllegalOrphanException;
+import controllers.exceptions.NonexistentEntityException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import javax.swing.JOptionPane;
 import models.Controladora;
 import models.Tpv;
 
@@ -16,10 +22,17 @@ import models.Tpv;
 public class Main {
 
     private static final TpvJpaController tpv = new TpvJpaController();
+    private static final ProductoJpaController prod = new ProductoJpaController();
 
-    public static void main(String[] args) {
-        Date fechaHora = new Date("2024-05-24T00:00:00");
-        Tpv t1 = new Tpv("España", fechaHora, "1234");
+    public static void main(String[] args) throws IllegalOrphanException, NonexistentEntityException {
+        Date fechaHora = parsearDate("2024-05-24T00:00:00");
+        Tpv t1 = new Tpv("Marruecos", fechaHora, "1234");
+        tpv.create(t1);
+        tpv.destroy(6);
+        tpv.create(t1);
+        // NonexistentEntityException
+        System.out.println(prod.findProductoEntities());
+        
     }
 
     public static void mostrarTpv() {
@@ -28,5 +41,14 @@ public class Main {
         System.out.println("--------------------------------------------");
 
     }
-
+    private static Date parsearDate(String fecha) {
+        SimpleDateFormat formato = new SimpleDateFormat("yyyy-MM-dd");
+        Date fechaParseada = null;
+        try {
+            fechaParseada = formato.parse(fecha);
+        } catch (ParseException e) {
+            JOptionPane.showMessageDialog(null, "La fecha introducida no es correcta");
+        }
+        return fechaParseada;
+    }
 }
