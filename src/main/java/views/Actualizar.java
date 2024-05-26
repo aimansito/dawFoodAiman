@@ -44,35 +44,33 @@ public class Actualizar extends javax.swing.JDialog {
             // Verifica que una fila esté seleccionada
             if (fila == -1) {
                 JOptionPane.showMessageDialog(null, "Por favor, seleccione un producto primero.");
-                return;
+                this.dispose();
+                //// Verifica que la tabla tiene al menos una columna
+            } else if (padre.getJTable().getColumnCount() == 0) {
+                JOptionPane.showMessageDialog(null, "La tabla no tiene columnas");
+                this.dispose();
+            } else {
+                // El id del producto es el valor de la columna cero de esa fila
+                int idProducto;
+                try {
+                    idProducto = (Integer) padre.getJTable().getValueAt(fila, 0);
+                } catch (ClassCastException e) {
+                    idProducto = Integer.parseInt(padre.getJTable().getValueAt(fila, 0).toString());
+                }
+
+                // Guarda el producto seleccionado
+                this.producto = padre.getListaProductos().getProducto(idProducto);
+
+                // Llena los campos del formulario con los datos del producto
+                jTextField1.setText(this.producto.getIdProducto().toString());
+                jTextField1.setEditable(false);
+                jTextField1.setBackground(Color.GRAY);
+                jComboBox1.setSelectedItem(this.producto.getIva());
+                jTextField4.setText(this.producto.getStock().toString());
+                jTextField3.setText(this.producto.getPrecio().toString());
+                jTextField5.setText(this.producto.getDescripcion());
+                jComboBox2.setSelectedItem(this.producto.getCodTipoProducto().getTipoProdDescripcion());
             }
-
-            // Verifica que la tabla tiene al menos una columna
-            if (padre.getJTable().getColumnCount() == 0) {
-                JOptionPane.showMessageDialog(null, "La tabla no tiene columnas.");
-                return;
-            }
-
-            // El id del producto es el valor de la columna cero de esa fila
-            int idProducto;
-            try {
-                idProducto = (Integer) padre.getJTable().getValueAt(fila, 0);
-            } catch (ClassCastException e) {
-                idProducto = Integer.parseInt(padre.getJTable().getValueAt(fila, 0).toString());
-            }
-
-            // Guarda el producto seleccionado
-            this.producto = padre.getListaProductos().getProducto(idProducto);
-
-            // Llena los campos del formulario con los datos del producto
-            jTextField1.setText(this.producto.getIdProducto().toString());
-            jTextField1.setEditable(false);
-            jTextField1.setBackground(Color.GRAY);
-            jComboBox1.setSelectedItem(this.producto.getIva());
-            jTextField4.setText(this.producto.getStock().toString()); 
-            jTextField3.setText(this.producto.getPrecio().toString());
-            jTextField5.setText(this.producto.getDescripcion()); 
-            jComboBox2.setSelectedItem(this.producto.getCodTipoProducto().getTipoProdDescripcion());
         } catch (ArrayIndexOutOfBoundsException e) {
             JOptionPane.showMessageDialog(null, "Error se ha salido del array.");
         } catch (Exception e) {
@@ -235,17 +233,19 @@ public class Actualizar extends javax.swing.JDialog {
         TipoProducto tProd = tipoProd.getTipoProductoPorNombre(tipo);
         String iva = (String) jComboBox1.getSelectedItem().toString();
         BigDecimal precio = new BigDecimal(jTextField3.getText());
-        Producto p1 = new Producto(Integer.parseInt(jTextField1.getText()),iva,precio,Integer.parseInt(jTextField4.getText()),jTextField5.getText(),tProd);
+        Producto p1 = new Producto(Integer.parseInt(jTextField1.getText()), iva, precio, Integer.parseInt(jTextField4.getText()), jTextField5.getText(), tProd);
         padre.getListaProductos();
         try {
             prod.edit(p1);
-            
+
 //        Producto p1 = new Producto(iva, BigDecimal.ZERO, ABORT, descripcion, codTipoProducto)
         } catch (NonexistentEntityException ex) {
             Logger.getLogger(Actualizar.class.getName()).log(Level.SEVERE, null, ex);
         } catch (Exception ex) {
             Logger.getLogger(Actualizar.class.getName()).log(Level.SEVERE, null, ex);
         }
+        JOptionPane.showMessageDialog(null, "Se ha actualizado correctamente");
+        this.dispose();
     }//GEN-LAST:event_jButton1ActionPerformed
 
 

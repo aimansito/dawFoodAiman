@@ -62,6 +62,7 @@ public class Comprar extends javax.swing.JDialog {
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
         jButton5 = new javax.swing.JButton();
+        jButton6 = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
@@ -74,7 +75,7 @@ public class Comprar extends javax.swing.JDialog {
         jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel2.setText("Menú Tacos Aiman");
         jLabel2.setBorder(javax.swing.BorderFactory.createMatteBorder(1, 1, 1, 1, new java.awt.Color(225, 166, 51)));
-        jPanel2.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 30, 200, 40));
+        jPanel2.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(170, 30, 200, 40));
 
         jButton1.setBackground(new java.awt.Color(0, 0, 0));
         jButton1.setFont(new java.awt.Font("Arial Nova", 1, 12)); // NOI18N
@@ -86,7 +87,7 @@ public class Comprar extends javax.swing.JDialog {
                 jButton1ActionPerformed(evt);
             }
         });
-        jPanel2.add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 410, 110, 40));
+        jPanel2.add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 410, 110, 40));
 
         jButton2.setBackground(new java.awt.Color(0, 0, 0));
         jButton2.setFont(new java.awt.Font("Arial Nova", 1, 12)); // NOI18N
@@ -98,7 +99,7 @@ public class Comprar extends javax.swing.JDialog {
                 jButton2ActionPerformed(evt);
             }
         });
-        jPanel2.add(jButton2, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 410, 110, 40));
+        jPanel2.add(jButton2, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 410, 110, 40));
 
         jButton3.setBackground(new java.awt.Color(0, 0, 0));
         jButton3.setFont(new java.awt.Font("Arial Nova", 1, 12)); // NOI18N
@@ -110,7 +111,7 @@ public class Comprar extends javax.swing.JDialog {
                 jButton3ActionPerformed(evt);
             }
         });
-        jPanel2.add(jButton3, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 410, 110, 40));
+        jPanel2.add(jButton3, new org.netbeans.lib.awtextra.AbsoluteConstraints(250, 410, 110, 40));
 
         jButton4.setBackground(new java.awt.Color(255, 0, 0));
         jButton4.setFont(new java.awt.Font("Arial Nova", 1, 12)); // NOI18N
@@ -121,7 +122,7 @@ public class Comprar extends javax.swing.JDialog {
                 jButton4ActionPerformed(evt);
             }
         });
-        jPanel2.add(jButton4, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 460, 70, -1));
+        jPanel2.add(jButton4, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 460, 70, -1));
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -136,22 +137,34 @@ public class Comprar extends javax.swing.JDialog {
         ));
         jScrollPane1.setViewportView(jTable1);
 
-        jPanel2.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 80, 460, 300));
+        jPanel2.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 80, 460, 300));
 
         jButton5.setBackground(new java.awt.Color(0, 0, 0));
         jButton5.setFont(new java.awt.Font("Arial Nova", 1, 12)); // NOI18N
         jButton5.setForeground(new java.awt.Color(51, 255, 51));
         jButton5.setText("COMPRAR");
-        jButton5.setBorder(javax.swing.BorderFactory.createMatteBorder(1, 1, 1, 1, new java.awt.Color(225, 166, 51)));
+        jButton5.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(225, 166, 51)));
         jButton5.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton5ActionPerformed(evt);
             }
         });
-        jPanel2.add(jButton5, new org.netbeans.lib.awtextra.AbsoluteConstraints(390, 410, 100, 40));
+        jPanel2.add(jButton5, new org.netbeans.lib.awtextra.AbsoluteConstraints(480, 410, 100, 40));
+
+        jButton6.setBackground(new java.awt.Color(0, 0, 0));
+        jButton6.setFont(new java.awt.Font("Arial Nova", 1, 12)); // NOI18N
+        jButton6.setForeground(new java.awt.Color(225, 166, 51));
+        jButton6.setText("VER CARRITO");
+        jButton6.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(225, 166, 51)));
+        jButton6.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton6ActionPerformed(evt);
+            }
+        });
+        jPanel2.add(jButton6, new org.netbeans.lib.awtextra.AbsoluteConstraints(370, 410, 100, 40));
 
         jLabel1.setText("jLabel1");
-        jPanel2.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 500, 520));
+        jPanel2.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 600, 520));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -275,8 +288,6 @@ public class Comprar extends javax.swing.JDialog {
                     tipoProd = tipo.findTipoProducto(1);
                 } else if (codigoTipoProducto.equalsIgnoreCase("BEBIDAS")) {
                     tipoProd = tipo.findTipoProducto(2);
-                } else {
-                    tipoProd = tipo.findTipoProducto(3);
                 }
             } catch (ClassCastException | NumberFormatException e) {
                 JOptionPane.showMessageDialog(null, "Error al convertir los valores de la tabla: " + e.getMessage());
@@ -286,22 +297,28 @@ public class Comprar extends javax.swing.JDialog {
             int cantidad = Integer.parseInt(JOptionPane.showInputDialog("Introduce la cantidad que desea de: " + prod.findProducto(idProducto).getDescripcion()));
             Producto p = new Producto(idProducto, iva, precio, stock, descripcion, tipoProd);
 
-            // Agregar el producto al carritoMap
-            carritoMap.put(cantidad, p);
+            if (cantidad > stock) {
+                JOptionPane.showMessageDialog(null, "No hay suficiente stock");
 
-            // Actualizar el carrito
-            carrito = new Carrito(carritoMap);
+            } else {
+                // Agregar el producto al carritoMap
+                carritoMap.put(cantidad, p);
 
-            //Recorro el map para meter en el stringbuilder los valores
-            StringBuilder nombresYCantidades = new StringBuilder();
-            for (Map.Entry<Integer, Producto> entry : carritoMap.entrySet()) {
-                int cantidadProducto = entry.getKey();
-                Producto producto = entry.getValue();
-                nombresYCantidades.append("Producto: ").append(producto.getDescripcion())
-                        .append(", Cantidad: ").append(cantidadProducto).append("\n");
+                // Actualizar el carrito
+                carrito = new Carrito(carritoMap);
+
+//                //Recorro el map para meter en el stringbuilder los valores
+//                StringBuilder nombresYCantidades = new StringBuilder();
+//                for (Map.Entry<Integer, Producto> entry : carritoMap.entrySet()) {
+//                    int cantidadProducto = entry.getKey();
+//                    Producto producto = entry.getValue();
+//                    nombresYCantidades.append("Producto: ").append(producto.getDescripcion())
+//                            .append(", Cantidad: ").append(cantidadProducto).append("\n");
+//                }
+//                JOptionPane.showMessageDialog(null, "Producto añadido al carrito: \n" + nombresYCantidades.toString());
+                JOptionPane.showMessageDialog(null, "Se ha añadido el producto al carrito");
             }
 
-            JOptionPane.showMessageDialog(null, "Producto añadido al carrito: \n" + nombresYCantidades.toString());
         } catch (ArrayIndexOutOfBoundsException e) {
             JOptionPane.showMessageDialog(null, "Error: Se ha salido del array.");
         } catch (Exception e) {
@@ -310,6 +327,18 @@ public class Comprar extends javax.swing.JDialog {
 
 
     }//GEN-LAST:event_jButton5ActionPerformed
+
+    private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
+        // TODO add your handling code here:
+        StringBuilder nombresYCantidades = new StringBuilder();
+        for (Map.Entry<Integer, Producto> entry : carritoMap.entrySet()) {
+            int cantidadProducto = entry.getKey();
+            Producto producto = entry.getValue();
+            nombresYCantidades.append("Producto: ").append(producto.getDescripcion())
+                    .append(", Cantidad: ").append(cantidadProducto).append("\n");
+        }
+        JOptionPane.showMessageDialog(null,nombresYCantidades);
+    }//GEN-LAST:event_jButton6ActionPerformed
 
     private void cargarDatosJTable() {
 
@@ -369,6 +398,7 @@ public class Comprar extends javax.swing.JDialog {
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
     private javax.swing.JButton jButton5;
+    private javax.swing.JButton jButton6;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel2;

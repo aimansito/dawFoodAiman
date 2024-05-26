@@ -23,6 +23,7 @@ import models.Producto;
  * @author aiman
  */
 public class Crud extends javax.swing.JDialog {
+
     Escalar escalar = new Escalar();
     private VentanaPrincipal padre;
     private modelo_tabla.ListaProducto listaProducto;
@@ -31,7 +32,7 @@ public class Crud extends javax.swing.JDialog {
      * Creates new form Consulta
      */
     public Crud(VentanaPrincipal parent, boolean modal) throws IOException {
-        super(parent,modal);
+        super(parent, modal);
         padre = parent;
         listaProducto = new ListaProducto();
         initComponents();
@@ -155,13 +156,13 @@ public class Crud extends javax.swing.JDialog {
             Logger.getLogger(Crud.class.getName()).log(Level.SEVERE, null, ex);
             JOptionPane.showMessageDialog(null, "Este producto no existe ");
         }
-        
+
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
 //        this.dispose();
-        new AñadirProd(this,true).setVisible(true);
+        new AñadirProd(this, true).setVisible(true);
         cargarDatosJTable();
     }//GEN-LAST:event_jButton1ActionPerformed
 
@@ -172,9 +173,19 @@ public class Crud extends javax.swing.JDialog {
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         // TODO add your handling code here:
-        new Actualizar(this, true).setVisible(true);
-        cargarDatosJTable();
+        int fila = filaSeleccionadaJTable(jTable1);
+        if (fila == -1) {
+            JOptionPane.showMessageDialog(null, "Por favor, seleccione un producto primero.");
+            //// Verifica que la tabla tiene al menos una columna
+        } else if (this.jTable1.getColumnCount() == 0) {
+            JOptionPane.showMessageDialog(null, "La tabla no tiene columnas");
+        } else {
+            new Actualizar(this, true).setVisible(true);
+            cargarDatosJTable();
+        }
     }//GEN-LAST:event_jButton3ActionPerformed
+
+    
 
     private void cargarDatosJTable() {
 
@@ -210,7 +221,10 @@ public class Crud extends javax.swing.JDialog {
         return this.jTable1;
     }
 
-
+    private int filaSeleccionadaJTable(JTable jTable1) {
+        int fila = jTable1.getSelectedRow();
+        return fila;
+    }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;

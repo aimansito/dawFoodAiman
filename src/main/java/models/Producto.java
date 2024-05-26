@@ -177,7 +177,4 @@ public class Producto implements Serializable {
         sb.append('}');
         return sb.toString();
     }
-
-    
-    
 }

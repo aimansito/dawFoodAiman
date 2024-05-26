@@ -208,15 +208,33 @@ public class TipoProductoJpaController implements Serializable {
             em.close();
         }
     }  
-     // Método para obtener TipoProducto por nombre
-     public TipoProducto getTipoProductoPorNombre(String nombre) {
+    // Método para obtener TipoProducto por nombre
+    public TipoProducto getTipoProductoPorNombre(String nombre) {
         EntityManager em = getEntityManager();
         try {
-            TypedQuery<TipoProducto> query = em.createQuery(
-                "SELECT t FROM TipoProducto t WHERE t.nomCat = :nombre", TipoProducto.class);
-            query.setParameter("nombre", nombre);
+            TypedQuery<TipoProducto> query = em.createNamedQuery("TipoProducto.findByNomCat", TipoProducto.class);
+            query.setParameter("nomCat", nombre);
             List<TipoProducto> resultados = query.getResultList();
             return resultados.isEmpty() ? null : resultados.get(0);
+        } finally {
+            em.close();
+        }
+    }
+    public TipoProducto findTipoProductoByCodTipoProducto(int codTipoProducto) {
+        EntityManager em = getEntityManager();
+        try {
+            Query query = em.createNamedQuery("TipoProducto.findByCodTipoProducto");
+            query.setParameter("codTipoProducto", codTipoProducto);
+            return (TipoProducto) query.getSingleResult();
+        } finally {
+            em.close();
+        }
+    }
+    public List<TipoProducto> findAllTipoProductos() {
+        EntityManager em = getEntityManager();
+        try {
+            Query query = em.createNamedQuery("TipoProducto.findAll");
+            return query.getResultList();
         } finally {
             em.close();
         }
