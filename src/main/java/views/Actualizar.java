@@ -53,7 +53,7 @@ public class Actualizar extends javax.swing.JDialog {
                 return;
             }
 
-            // El id de la persona es el valor de la columna cero de esa fila
+            // El id del producto es el valor de la columna cero de esa fila
             int idProducto;
             try {
                 idProducto = (Integer) padre.getJTable().getValueAt(fila, 0);
@@ -61,7 +61,7 @@ public class Actualizar extends javax.swing.JDialog {
                 idProducto = Integer.parseInt(padre.getJTable().getValueAt(fila, 0).toString());
             }
 
-            // Guarda la persona seleccionada
+            // Guarda el producto seleccionado
             this.producto = padre.getListaProductos().getProducto(idProducto);
 
             // Llena los campos del formulario con los datos del producto
@@ -69,12 +69,12 @@ public class Actualizar extends javax.swing.JDialog {
             jTextField1.setEditable(false);
             jTextField1.setBackground(Color.GRAY);
             jComboBox1.setSelectedItem(this.producto.getIva());
-            jTextField4.setText(this.producto.getStock().toString()); // Asumiendo que el campo se llama cantidad
+            jTextField4.setText(this.producto.getStock().toString()); 
             jTextField3.setText(this.producto.getPrecio().toString());
-            jTextField5.setText(this.producto.getDescripcion()); // Asumiendo que el campo se llama nombre
+            jTextField5.setText(this.producto.getDescripcion()); 
             jComboBox2.setSelectedItem(this.producto.getCodTipoProducto().getTipoProdDescripcion());
         } catch (ArrayIndexOutOfBoundsException e) {
-            JOptionPane.showMessageDialog(null, "Índice fuera de los límites. Verifique la selección de la fila y las columnas de la tabla.");
+            JOptionPane.showMessageDialog(null, "Error se ha salido del array.");
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, "Ha ocurrido un error al intentar mostrar los datos para editar: " + e.getMessage());
         }

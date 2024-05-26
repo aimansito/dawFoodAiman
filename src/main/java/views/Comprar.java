@@ -5,12 +5,19 @@
 package views;
 
 import controllers.ProductoJpaController;
+import controllers.TipoProductoJpaController;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 import modelo_tabla.ListaProducto;
+import models.Carrito;
 import models.Producto;
+import models.TipoProducto;
 
 /**
  *
@@ -21,6 +28,8 @@ public class Comprar extends javax.swing.JDialog {
     private Escalar escalar = new Escalar();
     private VentanaPrincipal padre;
     private modelo_tabla.ListaProducto listaProducto;
+    private Map<Integer, Producto> carritoMap = new TreeMap<>();
+    private Carrito carrito = new Carrito(carritoMap);
 
     /**
      * Creates new form Comprar
@@ -52,6 +61,7 @@ public class Comprar extends javax.swing.JDialog {
         jButton4 = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
+        jButton5 = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
@@ -76,7 +86,7 @@ public class Comprar extends javax.swing.JDialog {
                 jButton1ActionPerformed(evt);
             }
         });
-        jPanel2.add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 410, 110, 40));
+        jPanel2.add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 410, 110, 40));
 
         jButton2.setBackground(new java.awt.Color(0, 0, 0));
         jButton2.setFont(new java.awt.Font("Arial Nova", 1, 12)); // NOI18N
@@ -88,7 +98,7 @@ public class Comprar extends javax.swing.JDialog {
                 jButton2ActionPerformed(evt);
             }
         });
-        jPanel2.add(jButton2, new org.netbeans.lib.awtextra.AbsoluteConstraints(200, 410, 110, 40));
+        jPanel2.add(jButton2, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 410, 110, 40));
 
         jButton3.setBackground(new java.awt.Color(0, 0, 0));
         jButton3.setFont(new java.awt.Font("Arial Nova", 1, 12)); // NOI18N
@@ -100,7 +110,7 @@ public class Comprar extends javax.swing.JDialog {
                 jButton3ActionPerformed(evt);
             }
         });
-        jPanel2.add(jButton3, new org.netbeans.lib.awtextra.AbsoluteConstraints(360, 410, 110, 40));
+        jPanel2.add(jButton3, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 410, 110, 40));
 
         jButton4.setBackground(new java.awt.Color(255, 0, 0));
         jButton4.setFont(new java.awt.Font("Arial Nova", 1, 12)); // NOI18N
@@ -126,10 +136,22 @@ public class Comprar extends javax.swing.JDialog {
         ));
         jScrollPane1.setViewportView(jTable1);
 
-        jPanel2.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 80, 450, 300));
+        jPanel2.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 80, 460, 300));
+
+        jButton5.setBackground(new java.awt.Color(0, 0, 0));
+        jButton5.setFont(new java.awt.Font("Arial Nova", 1, 12)); // NOI18N
+        jButton5.setForeground(new java.awt.Color(51, 255, 51));
+        jButton5.setText("COMPRAR");
+        jButton5.setBorder(javax.swing.BorderFactory.createMatteBorder(1, 1, 1, 1, new java.awt.Color(225, 166, 51)));
+        jButton5.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton5ActionPerformed(evt);
+            }
+        });
+        jPanel2.add(jButton5, new org.netbeans.lib.awtextra.AbsoluteConstraints(390, 410, 100, 40));
 
         jLabel1.setText("jLabel1");
-        jPanel2.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 500, 490));
+        jPanel2.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 500, 520));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -151,18 +173,18 @@ public class Comprar extends javax.swing.JDialog {
         List<Producto> prodList = prod.findProductoEntities();
         DefaultTableModel modelo = (DefaultTableModel) jTable1.getModel();
         modelo.setRowCount(0);
-            for (Producto producto : prodList) {
-                if (producto.getCodTipoProducto().getNomCat().equalsIgnoreCase("BEBIDAS")) {
-                    Object[] fila = new Object[6];
-                    fila[0] = producto.getIdProducto();
-                    fila[1] = producto.getIva();
-                    fila[2] = producto.getPrecio();
-                    fila[3] = producto.getStock();
-                    fila[4] = producto.getDescripcion();
-                    fila[5] = producto.getCodTipoProducto().getNomCat();
-                    modelo.addRow(fila);
-                }
+        for (Producto producto : prodList) {
+            if (producto.getCodTipoProducto().getNomCat().equalsIgnoreCase("BEBIDAS")) {
+                Object[] fila = new Object[6];
+                fila[0] = producto.getIdProducto();
+                fila[1] = producto.getIva();
+                fila[2] = producto.getPrecio();
+                fila[3] = producto.getStock();
+                fila[4] = producto.getDescripcion();
+                fila[5] = producto.getCodTipoProducto().getNomCat();
+                modelo.addRow(fila);
             }
+        }
         jTable1.setModel(modelo);
     }//GEN-LAST:event_jButton2ActionPerformed
 
@@ -177,41 +199,117 @@ public class Comprar extends javax.swing.JDialog {
         List<Producto> prodList = prod.findProductoEntities();
         DefaultTableModel modelo = (DefaultTableModel) jTable1.getModel();
         modelo.setRowCount(0);
-            for (Producto producto : prodList) {
-                if (producto.getCodTipoProducto().getNomCat().equalsIgnoreCase("COMIDAS")) {
-                    Object[] fila = new Object[6];
-                    fila[0] = producto.getIdProducto();
-                    fila[1] = producto.getIva();
-                    fila[2] = producto.getPrecio();
-                    fila[3] = producto.getStock();
-                    fila[4] = producto.getDescripcion();
-                    fila[5] = producto.getCodTipoProducto().getNomCat();
-                    modelo.addRow(fila);
-                }
+        for (Producto producto : prodList) {
+            if (producto.getCodTipoProducto().getNomCat().equalsIgnoreCase("COMIDAS")) {
+                Object[] fila = new Object[6];
+                fila[0] = producto.getIdProducto();
+                fila[1] = producto.getIva();
+                fila[2] = producto.getPrecio();
+                fila[3] = producto.getStock();
+                fila[4] = producto.getDescripcion();
+                fila[5] = producto.getCodTipoProducto().getNomCat();
+                modelo.addRow(fila);
             }
+        }
         jTable1.setModel(modelo);
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         // TODO add your handling code here:
-          ProductoJpaController prod = new ProductoJpaController();
+        ProductoJpaController prod = new ProductoJpaController();
         List<Producto> prodList = prod.findProductoEntities();
         DefaultTableModel modelo = (DefaultTableModel) jTable1.getModel();
         modelo.setRowCount(0);
-            for (Producto producto : prodList) {
-                if (producto.getCodTipoProducto().getNomCat().equalsIgnoreCase("COMIDAS")) {
-                    Object[] fila = new Object[6];
-                    fila[0] = producto.getIdProducto();
-                    fila[1] = producto.getIva();
-                    fila[2] = producto.getPrecio();
-                    fila[3] = producto.getStock();
-                    fila[4] = producto.getDescripcion();
-                    fila[5] = producto.getCodTipoProducto().getNomCat();
-                    modelo.addRow(fila);
-                }
+        for (Producto producto : prodList) {
+            if (producto.getCodTipoProducto().getNomCat().equalsIgnoreCase("COMIDAS")) {
+                Object[] fila = new Object[6];
+                fila[0] = producto.getIdProducto();
+                fila[1] = producto.getIva();
+                fila[2] = producto.getPrecio();
+                fila[3] = producto.getStock();
+                fila[4] = producto.getDescripcion();
+                fila[5] = producto.getCodTipoProducto().getNomCat();
+                modelo.addRow(fila);
             }
+        }
         jTable1.setModel(modelo);
     }//GEN-LAST:event_jButton3ActionPerformed
+
+    private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
+        // TODO add your handling code here:
+        ProductoJpaController prod = new ProductoJpaController();
+        TipoProductoJpaController tipo = new TipoProductoJpaController();
+        try {
+            // Obtengo el id del producto seleccionado
+            int fila = filaSeleccionadaJTable(this.jTable1);
+
+            // Verifica que una fila esté seleccionada
+            if (fila == -1) {
+                JOptionPane.showMessageDialog(null, "Por favor, seleccione un producto primero.");
+                return;
+            }
+
+            // Verifica que la tabla tiene al menos una columna
+            if (this.jTable1.getColumnCount() == 0) {
+                JOptionPane.showMessageDialog(null, "La tabla no tiene columnas.");
+                return;
+            }
+
+            // El id del producto es el valor de la columna cero de esa fila
+            int idProducto = 0;
+            String iva = "";
+            BigDecimal precio = BigDecimal.ZERO;
+            int stock = 0;
+            String descripcion = "";
+            TipoProducto tipoProd = null;
+
+            try {
+                idProducto = Integer.parseInt(this.jTable1.getValueAt(fila, 0).toString());
+                iva = this.jTable1.getValueAt(fila, 1).toString();
+                precio = new BigDecimal(this.jTable1.getValueAt(fila, 2).toString());
+                stock = Integer.parseInt(this.jTable1.getValueAt(fila, 3).toString());
+                descripcion = this.jTable1.getValueAt(fila, 4).toString();
+
+                String codigoTipoProducto = this.jTable1.getValueAt(fila, 5).toString();
+                if (codigoTipoProducto.equalsIgnoreCase("COMIDAS")) {
+                    tipoProd = tipo.findTipoProducto(1);
+                } else if (codigoTipoProducto.equalsIgnoreCase("BEBIDAS")) {
+                    tipoProd = tipo.findTipoProducto(2);
+                } else {
+                    tipoProd = tipo.findTipoProducto(3);
+                }
+            } catch (ClassCastException | NumberFormatException e) {
+                JOptionPane.showMessageDialog(null, "Error al convertir los valores de la tabla: " + e.getMessage());
+                return;
+            }
+
+            int cantidad = Integer.parseInt(JOptionPane.showInputDialog("Introduce la cantidad que desea de: " + prod.findProducto(idProducto).getDescripcion()));
+            Producto p = new Producto(idProducto, iva, precio, stock, descripcion, tipoProd);
+
+            // Agregar el producto al carritoMap
+            carritoMap.put(cantidad, p);
+
+            // Actualizar el carrito
+            carrito = new Carrito(carritoMap);
+
+            //Recorro el map para meter en el stringbuilder los valores
+            StringBuilder nombresYCantidades = new StringBuilder();
+            for (Map.Entry<Integer, Producto> entry : carritoMap.entrySet()) {
+                int cantidadProducto = entry.getKey();
+                Producto producto = entry.getValue();
+                nombresYCantidades.append("Producto: ").append(producto.getDescripcion())
+                        .append(", Cantidad: ").append(cantidadProducto).append("\n");
+            }
+
+            JOptionPane.showMessageDialog(null, "Producto añadido al carrito: \n" + nombresYCantidades.toString());
+        } catch (ArrayIndexOutOfBoundsException e) {
+            JOptionPane.showMessageDialog(null, "Error: Se ha salido del array.");
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Ha ocurrido un error al intentar mostrar los datos para editar: " + e.getMessage());
+        }
+
+
+    }//GEN-LAST:event_jButton5ActionPerformed
 
     private void cargarDatosJTable() {
 
@@ -233,16 +331,16 @@ public class Comprar extends javax.swing.JDialog {
                     modelo.addRow(fila);
                 }
             }
-        }else{
+        } else {
             for (Producto producto : prodList) {
-                    Object[] fila = new Object[6];
-                    fila[0] = producto.getIdProducto();
-                    fila[1] = producto.getIva();
-                    fila[2] = producto.getPrecio();
-                    fila[3] = producto.getStock();
-                    fila[4] = producto.getDescripcion();
-                    fila[5] = producto.getCodTipoProducto().getNomCat();
-                    modelo.addRow(fila);
+                Object[] fila = new Object[6];
+                fila[0] = producto.getIdProducto();
+                fila[1] = producto.getIva();
+                fila[2] = producto.getPrecio();
+                fila[3] = producto.getStock();
+                fila[4] = producto.getDescripcion();
+                fila[5] = producto.getCodTipoProducto().getNomCat();
+                modelo.addRow(fila);
             }
         }
         jTable1.setModel(modelo);
@@ -259,12 +357,18 @@ public class Comprar extends javax.swing.JDialog {
     public JTable getJTable() {
         return this.jTable1;
     }
-    
+
+    private int filaSeleccionadaJTable(JTable jTable1) {
+        int fila = jTable1.getSelectedRow();
+        return fila;
+    }
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
+    private javax.swing.JButton jButton5;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel2;

@@ -173,8 +173,7 @@ public class Producto implements Serializable {
         sb.append(", precio=").append(precio);
         sb.append(", stock=").append(stock);
         sb.append(", descripcion=").append(descripcion);
-        sb.append(", codTipoProducto=").append(codTipoProducto);
-        sb.append(", detalleTicketCollection=").append(detalleTicketCollection);
+        sb.append(", codTipoProducto=").append(codTipoProducto.getNomCat());
         sb.append('}');
         return sb.toString();
     }
