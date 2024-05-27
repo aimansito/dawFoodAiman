@@ -179,7 +179,9 @@ public class Crud extends javax.swing.JDialog {
             //// Verifica que la tabla tiene al menos una columna
         } else if (this.jTable1.getColumnCount() == 0) {
             JOptionPane.showMessageDialog(null, "La tabla no tiene columnas");
+        
         } else {
+            System.out.println("fila seleccionada: "+fila);
             new Actualizar(this, true).setVisible(true);
             cargarDatosJTable();
         }
@@ -187,7 +189,7 @@ public class Crud extends javax.swing.JDialog {
 
     
 
-    private void cargarDatosJTable() {
+    public void cargarDatosJTable() {
 
         ProductoJpaController prod = new ProductoJpaController();
         List<Producto> prodList = prod.findProductoEntities();

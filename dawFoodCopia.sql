@@ -3,7 +3,8 @@
 -- Host: 192.168.1.170    Database: dawFoodAiman
 -- ------------------------------------------------------
 -- Server version	8.0.36-0ubuntu0.20.04.1
-
+create database dawFoodAiman;
+use dawFoodAiman;
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;

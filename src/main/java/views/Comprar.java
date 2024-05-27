@@ -234,7 +234,7 @@ public class Comprar extends javax.swing.JDialog {
         DefaultTableModel modelo = (DefaultTableModel) jTable1.getModel();
         modelo.setRowCount(0);
         for (Producto producto : prodList) {
-            if (producto.getCodTipoProducto().getNomCat().equalsIgnoreCase("COMIDAS")) {
+            if (producto.getCodTipoProducto().getNomCat().equalsIgnoreCase("POSTRES")) {
                 Object[] fila = new Object[6];
                 fila[0] = producto.getIdProducto();
                 fila[1] = producto.getIva();

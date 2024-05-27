@@ -115,6 +115,11 @@ public class CarritoV extends javax.swing.JDialog {
         jButton4.setForeground(new java.awt.Color(225, 166, 51));
         jButton4.setText("VACIAR CARRITO");
         jButton4.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(225, 166, 51)));
+        jButton4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton4ActionPerformed(evt);
+            }
+        });
         jPanel1.add(jButton4, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 324, 140, 50));
 
         jButton5.setBackground(new java.awt.Color(0, 0, 0));
@@ -145,13 +150,22 @@ public class CarritoV extends javax.swing.JDialog {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
-        JOptionPane.showMessageDialog(null, padre.getMap());
+        if(padre.getMap().isEmpty()){
+            JOptionPane.showMessageDialog(null, "No hay productos en el carrito");
+        }else{
+            JOptionPane.showMessageDialog(null, padre.getMap());
+        }
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         // TODO add your handling code here:
         this.dispose();
     }//GEN-LAST:event_jButton3ActionPerformed
+
+    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
+        // TODO add your handling code here:
+        padre.getMap().clear();
+    }//GEN-LAST:event_jButton4ActionPerformed
 
     
 

@@ -160,7 +160,7 @@ public class AñadirProd extends javax.swing.JDialog {
         Producto p1 = new Producto(iva,precio,Integer.parseInt(jTextField2.getText()),jTextField3.getText(),tProd);
         crud.getListaProductos();
         prod.create(p1);
-        JOptionPane.showMessageDialog(null, "Se ha añadido correctamente");
+        crud.cargarDatosJTable();
         this.dispose();
     }//GEN-LAST:event_jButton1ActionPerformed
 

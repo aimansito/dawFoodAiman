@@ -19,6 +19,7 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
+import javax.swing.JOptionPane;
 import models.Producto;
 
 /**
@@ -30,6 +31,7 @@ public class ProductoJpaController implements Serializable {
     public ProductoJpaController(EntityManagerFactory emf) {
         this.emf = emf;
     }
+
     // creo un constructor para poder tener una instancia de cada controller 
     // y asi hacer uso de los metodos de cada uno
     public ProductoJpaController() {
@@ -50,39 +52,53 @@ public class ProductoJpaController implements Serializable {
         try {
             em = getEntityManager();
             em.getTransaction().begin();
-            TipoProducto codTipoProducto = producto.getCodTipoProducto();
-            if (codTipoProducto != null) {
-                codTipoProducto = em.getReference(codTipoProducto.getClass(), codTipoProducto.getCodTipoProducto());
-                producto.setCodTipoProducto(codTipoProducto);
-            }
-            Collection<DetalleTicket> attachedDetalleTicketCollection = new ArrayList<DetalleTicket>();
-            for (DetalleTicket detalleTicketCollectionDetalleTicketToAttach : producto.getDetalleTicketCollection()) {
-                detalleTicketCollectionDetalleTicketToAttach = em.getReference(detalleTicketCollectionDetalleTicketToAttach.getClass(), detalleTicketCollectionDetalleTicketToAttach.getCantidadProducto());
-                attachedDetalleTicketCollection.add(detalleTicketCollectionDetalleTicketToAttach);
-            }
-            producto.setDetalleTicketCollection(attachedDetalleTicketCollection);
-            em.persist(producto);
-            if (codTipoProducto != null) {
-                codTipoProducto.getProductoCollection().add(producto);
-                codTipoProducto = em.merge(codTipoProducto);
-            }
-            for (DetalleTicket detalleTicketCollectionDetalleTicket : producto.getDetalleTicketCollection()) {
-                Producto oldIdProductoOfDetalleTicketCollectionDetalleTicket = detalleTicketCollectionDetalleTicket.getIdProducto();
-                detalleTicketCollectionDetalleTicket.setIdProducto(producto);
-                detalleTicketCollectionDetalleTicket = em.merge(detalleTicketCollectionDetalleTicket);
-                if (oldIdProductoOfDetalleTicketCollectionDetalleTicket != null) {
-                    oldIdProductoOfDetalleTicketCollectionDetalleTicket.getDetalleTicketCollection().remove(detalleTicketCollectionDetalleTicket);
-                    oldIdProductoOfDetalleTicketCollectionDetalleTicket = em.merge(oldIdProductoOfDetalleTicketCollectionDetalleTicket);
+
+            // Verificar si ya existe un Producto con la misma descripción
+            Query query = em.createQuery("SELECT p FROM Producto p WHERE p.descripcion = :descripcion");
+            query.setParameter("descripcion", producto.getDescripcion());
+            List<Producto> existingProductos = query.getResultList();
+
+            if (!existingProductos.isEmpty()) {
+                // Si ya existe un Producto con la misma descripción, no se insertan los datos
+                JOptionPane.showMessageDialog(null, "Ya existe un Producto con esta descripción");
+            } else {
+                // Continuar con la inserción del nuevo Producto
+                TipoProducto codTipoProducto = producto.getCodTipoProducto();
+                if (codTipoProducto != null) {
+                    codTipoProducto = em.getReference(codTipoProducto.getClass(), codTipoProducto.getCodTipoProducto());
+                    producto.setCodTipoProducto(codTipoProducto);
                 }
+                Collection<DetalleTicket> attachedDetalleTicketCollection = new ArrayList<DetalleTicket>();
+                for (DetalleTicket detalleTicketCollectionDetalleTicketToAttach : producto.getDetalleTicketCollection()) {
+                    detalleTicketCollectionDetalleTicketToAttach = em.getReference(detalleTicketCollectionDetalleTicketToAttach.getClass(), detalleTicketCollectionDetalleTicketToAttach.getCantidadProducto());
+                    attachedDetalleTicketCollection.add(detalleTicketCollectionDetalleTicketToAttach);
+                }
+                producto.setDetalleTicketCollection(attachedDetalleTicketCollection);
+                em.persist(producto);
+                if (codTipoProducto != null) {
+                    codTipoProducto.getProductoCollection().add(producto);
+                    codTipoProducto = em.merge(codTipoProducto);
+                }
+                for (DetalleTicket detalleTicketCollectionDetalleTicket : producto.getDetalleTicketCollection()) {
+                    Producto oldIdProductoOfDetalleTicketCollectionDetalleTicket = detalleTicketCollectionDetalleTicket.getIdProducto();
+                    detalleTicketCollectionDetalleTicket.setIdProducto(producto);
+                    detalleTicketCollectionDetalleTicket = em.merge(detalleTicketCollectionDetalleTicket);
+                    if (oldIdProductoOfDetalleTicketCollectionDetalleTicket != null) {
+                        oldIdProductoOfDetalleTicketCollectionDetalleTicket.getDetalleTicketCollection().remove(detalleTicketCollectionDetalleTicket);
+                        oldIdProductoOfDetalleTicketCollectionDetalleTicket = em.merge(oldIdProductoOfDetalleTicketCollectionDetalleTicket);
+                    }
+                }
+                em.getTransaction().commit();
+                JOptionPane.showMessageDialog(null, "Se ha añadido correctamente");
+
             }
-            em.getTransaction().commit();
         } finally {
             if (em != null) {
                 em.close();
             }
         }
     }
-    
+
     public void edit(Producto producto) throws NonexistentEntityException, Exception {
         EntityManager em = null;
         try {
@@ -175,7 +191,6 @@ public class ProductoJpaController implements Serializable {
 //            }
 //        }
 //    }
-
     public void destroy(Integer id) throws IllegalOrphanException, NonexistentEntityException {
         EntityManager em = null;
         try {

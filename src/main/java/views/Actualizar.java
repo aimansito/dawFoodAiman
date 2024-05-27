@@ -33,9 +33,11 @@ public class Actualizar extends javax.swing.JDialog {
         this.padre = parent;
         initComponents();
         mostrarDatosEditar();
+        padre.cargarDatosJTable();
     }
 
     private void mostrarDatosEditar() {
+        ProductoJpaController prod = new ProductoJpaController();
         try {
             // Obtengo el id de la persona seleccionada
             // Para ello, obtengo la fila seleccionada y luego el id de esa fila
@@ -59,7 +61,7 @@ public class Actualizar extends javax.swing.JDialog {
                 }
 
                 // Guarda el producto seleccionado
-                this.producto = padre.getListaProductos().getProducto(idProducto);
+                this.producto = prod.findProducto(idProducto);
 
                 // Llena los campos del formulario con los datos del producto
                 jTextField1.setText(this.producto.getIdProducto().toString());
@@ -69,12 +71,12 @@ public class Actualizar extends javax.swing.JDialog {
                 jTextField4.setText(this.producto.getStock().toString());
                 jTextField3.setText(this.producto.getPrecio().toString());
                 jTextField5.setText(this.producto.getDescripcion());
-                jComboBox2.setSelectedItem(this.producto.getCodTipoProducto().getTipoProdDescripcion());
+                jComboBox2.setSelectedItem(this.producto.getCodTipoProducto().getNomCat());
             }
         } catch (ArrayIndexOutOfBoundsException e) {
             JOptionPane.showMessageDialog(null, "Error se ha salido del array.");
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, "Ha ocurrido un error al intentar mostrar los datos para editar: " + e.getMessage());
+//        } catch (Exception e) {
+//            JOptionPane.showMessageDialog(null, "Ha ocurrido un error al intentar mostrar los datos para editar: " + e.getMessage());
         }
     }
 
