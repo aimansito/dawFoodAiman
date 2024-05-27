@@ -75,7 +75,7 @@ public class Comprar extends javax.swing.JDialog {
         jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel2.setText("Menú Tacos Aiman");
         jLabel2.setBorder(javax.swing.BorderFactory.createMatteBorder(1, 1, 1, 1, new java.awt.Color(225, 166, 51)));
-        jPanel2.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(170, 30, 200, 40));
+        jPanel2.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(200, 30, 200, 40));
 
         jButton1.setBackground(new java.awt.Color(0, 0, 0));
         jButton1.setFont(new java.awt.Font("Arial Nova", 1, 12)); // NOI18N
@@ -141,8 +141,8 @@ public class Comprar extends javax.swing.JDialog {
 
         jButton5.setBackground(new java.awt.Color(0, 0, 0));
         jButton5.setFont(new java.awt.Font("Arial Nova", 1, 12)); // NOI18N
-        jButton5.setForeground(new java.awt.Color(51, 255, 51));
-        jButton5.setText("COMPRAR");
+        jButton5.setForeground(new java.awt.Color(225, 166, 51));
+        jButton5.setText("AÑADIR AL CARRITO");
         jButton5.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(225, 166, 51)));
         jButton5.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -154,7 +154,7 @@ public class Comprar extends javax.swing.JDialog {
         jButton6.setBackground(new java.awt.Color(0, 0, 0));
         jButton6.setFont(new java.awt.Font("Arial Nova", 1, 12)); // NOI18N
         jButton6.setForeground(new java.awt.Color(225, 166, 51));
-        jButton6.setText("VER CARRITO");
+        jButton6.setText("CARRITO");
         jButton6.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(225, 166, 51)));
         jButton6.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -330,14 +330,7 @@ public class Comprar extends javax.swing.JDialog {
 
     private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
         // TODO add your handling code here:
-        StringBuilder nombresYCantidades = new StringBuilder();
-        for (Map.Entry<Integer, Producto> entry : carritoMap.entrySet()) {
-            int cantidadProducto = entry.getKey();
-            Producto producto = entry.getValue();
-            nombresYCantidades.append("Producto: ").append(producto.getDescripcion())
-                    .append(", Cantidad: ").append(cantidadProducto).append("\n");
-        }
-        JOptionPane.showMessageDialog(null,nombresYCantidades);
+        new CarritoV(this, true).setVisible(true);
     }//GEN-LAST:event_jButton6ActionPerformed
 
     private void cargarDatosJTable() {
@@ -390,6 +383,21 @@ public class Comprar extends javax.swing.JDialog {
     private int filaSeleccionadaJTable(JTable jTable1) {
         int fila = jTable1.getSelectedRow();
         return fila;
+    }
+    
+    public Map<Integer,Producto> getMap(){
+        return this.carritoMap;
+    }
+    
+    public void mostrarMap(){
+        StringBuilder nombresYCantidades = new StringBuilder();
+        for (Map.Entry<Integer, Producto> entry : carritoMap.entrySet()) {
+            int cantidadProducto = entry.getKey();
+            Producto producto = entry.getValue();
+            nombresYCantidades.append("Producto: ").append(producto.getDescripcion())
+                    .append(", Cantidad: ").append(cantidadProducto).append("\n");
+        }
+        JOptionPane.showMessageDialog(null,nombresYCantidades);
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
