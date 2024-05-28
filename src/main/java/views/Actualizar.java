@@ -4,15 +4,18 @@
  */
 package views;
 
+import controllers.DetalleTicketJpaController;
 import controllers.ProductoJpaController;
 import controllers.TipoProductoJpaController;
 import controllers.exceptions.NonexistentEntityException;
 import java.awt.Color;
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
+import models.DetalleTicket;
 import models.Producto;
 import models.TipoProducto;
 
@@ -229,6 +232,9 @@ public class Actualizar extends javax.swing.JDialog {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
+        boolean prodEncontrado = false;
+        DetalleTicketJpaController dt = new DetalleTicketJpaController();
+        List<DetalleTicket> det = dt.findDetalleTicketEntities();
         ProductoJpaController prod = new ProductoJpaController();
         TipoProductoJpaController tipoProd = new TipoProductoJpaController();
         String tipo = jComboBox2.getSelectedItem().toString();
@@ -237,17 +243,26 @@ public class Actualizar extends javax.swing.JDialog {
         BigDecimal precio = new BigDecimal(jTextField3.getText());
         Producto p1 = new Producto(Integer.parseInt(jTextField1.getText()), iva, precio, Integer.parseInt(jTextField4.getText()), jTextField5.getText(), tProd);
         padre.getListaProductos();
-        try {
-            prod.edit(p1);
+        for (DetalleTicket d : det) {
+            if (d.getIdProducto().getIdProducto() == p1.getIdProducto()) {
+                JOptionPane.showMessageDialog(null, "Este producto se encuentra en un ticket");
+                prodEncontrado = true;
+                break; // Salimos del bucle si el producto se encuentra en un ticket
+            }
+        }
+        if (!prodEncontrado) {
+            try {
+                prod.edit(p1);
 
 //        Producto p1 = new Producto(iva, BigDecimal.ZERO, ABORT, descripcion, codTipoProducto)
-        } catch (NonexistentEntityException ex) {
-            Logger.getLogger(Actualizar.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (Exception ex) {
-            Logger.getLogger(Actualizar.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (NonexistentEntityException ex) {
+                Logger.getLogger(Actualizar.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (Exception ex) {
+                Logger.getLogger(Actualizar.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            JOptionPane.showMessageDialog(null, "Se ha actualizado correctamente");
+            this.dispose();
         }
-        JOptionPane.showMessageDialog(null, "Se ha actualizado correctamente");
-        this.dispose();
     }//GEN-LAST:event_jButton1ActionPerformed
 
 

@@ -34,10 +34,10 @@ public class CarritoV extends javax.swing.JDialog {
 
     private Escalar escalar = new Escalar();
     private Comprar padre;
-    private Map<Integer,Producto> map;
+    private Map<Producto,Integer> map;
     private String mensaje;
 
-    public CarritoV(Comprar parent, boolean modal,Map<Integer,Producto> map) {
+    public CarritoV(Comprar parent, boolean modal,Map<Producto,Integer> map) {
         super(parent, modal);
         padre = parent;
         this.setLocationRelativeTo(null);
@@ -178,9 +178,9 @@ public class CarritoV extends javax.swing.JDialog {
             JOptionPane.showMessageDialog(null, "No hay productos en el carrito");
         } else {
             this.mensaje = "";
-            for (Map.Entry<Integer, Producto> entry : padre.getMap().entrySet()) {
-                    int cantidadProducto = entry.getKey();
-                    Producto producto = entry.getValue();
+            for (Map.Entry<Producto, Integer> entry : padre.getMap().entrySet()) {
+                    int cantidadProducto = entry.getValue();
+                    Producto producto = entry.getKey();
                     this.mensaje += "Producto: " + producto.getDescripcion() + ", Cantidad: " + cantidadProducto + "\n";
                 }
                 JOptionPane.showMessageDialog(null, mensaje);
@@ -214,9 +214,9 @@ public class CarritoV extends javax.swing.JDialog {
     }//GEN-LAST:event_jButton5ActionPerformed
     public BigDecimal calcularImporteTotal() {
         BigDecimal total = BigDecimal.ZERO;
-        for (Map.Entry<Integer, Producto> entry : padre.getMap().entrySet()) {
-            Producto producto = entry.getValue();
-            int cantidad = entry.getKey();
+        for (Map.Entry<Producto, Integer> entry : padre.getMap().entrySet()) {
+            Producto producto = entry.getKey();
+            int cantidad = entry.getValue();
             BigDecimal cantidadBigDecimal = BigDecimal.valueOf(cantidad);
             BigDecimal subtotal = producto.getPrecio().multiply(cantidadBigDecimal);
 
@@ -235,7 +235,7 @@ public class CarritoV extends javax.swing.JDialog {
         return total;
     }
 
-    public Map<Integer,Producto> getMap(){
+    public Map<Producto,Integer> getMap(){
         return this.map;
     }
 //    public Ticket crearTicket() throws Exception {

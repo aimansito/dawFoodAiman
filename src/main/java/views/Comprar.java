@@ -28,7 +28,7 @@ public class Comprar extends javax.swing.JDialog {
     private Escalar escalar = new Escalar();
     private VentanaPrincipal padre;
     private modelo_tabla.ListaProducto listaProducto;
-    private Map<Integer, Producto> carritoMap;
+    private Map<Producto, Integer> carritoMap;
     private Carrito carrito;
     private String mensaje;
 
@@ -304,26 +304,26 @@ public class Comprar extends javax.swing.JDialog {
             if (cantidad > stock) {
                 JOptionPane.showMessageDialog(null, "No hay suficiente stock");
 
-            } else if (this.carritoMap.isEmpty()) {
-                StringBuilder nombresYCantidades = new StringBuilder();
-                this.carritoMap.put(cantidad, p);
-                for (Map.Entry<Integer, Producto> entry : this.carritoMap.entrySet()) {
-                    int cantidadProducto = entry.getKey();
-                    Producto producto = entry.getValue();
-                    nombresYCantidades.append("Producto: ").append(producto.getDescripcion())
-                            .append(", Cantidad: ").append(cantidadProducto).append("\n");
-                }
-                System.out.println(nombresYCantidades);
-                this.carrito.setCarro(this.carritoMap);
-                JOptionPane.showMessageDialog(null, "Se ha añadido el producto al carrito");
+//            } else if (this.carritoMap.isEmpty()) {
+//                StringBuilder nombresYCantidades = new StringBuilder();
+//                this.carritoMap.put(p, cantidad);
+//                for (Map.Entry<Producto, Integer> entry : this.carritoMap.entrySet()) {
+//                    int cantidadProducto = entry.getValue();
+//                    Producto producto = entry.getKey();
+//                    nombresYCantidades.append("Producto: ").append(producto.getDescripcion())
+//                            .append(", Cantidad: ").append(cantidadProducto).append("\n");
+//                }
+//                System.out.println(nombresYCantidades);
+//                this.carrito.setCarro(this.carritoMap);
+//                JOptionPane.showMessageDialog(null, "Se ha añadido el producto al carrito");
             } else {
-                this.carritoMap.put(cantidad, p);
-                for (Map.Entry<Integer, Producto> entry : this.carritoMap.entrySet()) {
-                    int cantidadProducto = entry.getKey();
-                    Producto producto = entry.getValue();
-                    mensaje += "Producto: " + producto.getDescripcion() + ", Cantidad: " + cantidadProducto + "\n";
-                }
-                System.out.println(mensaje);
+                this.carritoMap.put(p, cantidad);
+//                for (Map.Entry<Producto, Integer> entry : this.carritoMap.entrySet()) {
+//                    int cantidadProducto = entry.getValue();
+//                    Producto producto = entry.getKey();
+//                    mensaje += "Producto: " + producto.getDescripcion() + ", Cantidad: " + cantidadProducto + "\n";
+//                }
+//                System.out.println(mensaje);
             }
 //                // Agregar el producto al carritoMap
 //                this.carritoMap.put(cantidad, p);
@@ -343,7 +343,9 @@ public class Comprar extends javax.swing.JDialog {
             JOptionPane.showMessageDialog(null, "Error: Se ha salido del array.");
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, "Ha ocurrido un error al intentar mostrar los datos para editar: " + e.getMessage());
+            System.out.println(e.getMessage());
         }
+        
 
 
     }//GEN-LAST:event_jButton5ActionPerformed
@@ -406,7 +408,7 @@ public class Comprar extends javax.swing.JDialog {
         return fila;
     }
 
-    public Map<Integer, Producto> getMap() {
+    public Map<Producto, Integer> getMap() {
         return this.carritoMap;
     }
     

@@ -41,14 +41,14 @@ public class Pago extends javax.swing.JDialog {
 
     private Escalar escalar = new Escalar();
     private CarritoV carrito;
-    private Map<Integer, Producto> productos;
+    private Map<Producto, Integer> productos;
     private Tarjeta tarjeta;
     private int nuevoStock;
 
     /**
      * Creates new form Pago
      */
-    public Pago(CarritoV parent, boolean modal, Map<Integer, Producto> map) {
+    public Pago(CarritoV parent, boolean modal, Map<Producto, Integer> map) {
         super(parent, modal);
         initComponents();
         escalar.escalarLabel(jLabel1, "/images/fondo2.png");
@@ -218,9 +218,9 @@ public class Pago extends javax.swing.JDialog {
         BigDecimal importeTotal = calcularImporteTotal().setScale(2, RoundingMode.HALF_UP);
         TicketJpaController ticketController = new TicketJpaController();
         int numPedido = ticketController.findNumPedidoMax() + 1;
-        for (Map.Entry<Integer, Producto> entry : carrito.getMap().entrySet()) {
-            Integer num = entry.getKey();
-            Producto producto = entry.getValue();
+        for (Map.Entry<Producto, Integer> entry : carrito.getMap().entrySet()) {
+            Integer num = entry.getValue();
+            Producto producto = entry.getKey();
             nuevoStock = producto.getStock() - num;
             producto.setStock(nuevoStock);
             prod.edit(producto);
@@ -234,9 +234,9 @@ public class Pago extends javax.swing.JDialog {
 
     public BigDecimal calcularImporteTotal() {
         BigDecimal total = BigDecimal.ZERO;
-        for (Map.Entry<Integer, Producto> entry : carrito.getMap().entrySet()) {
-            Producto producto = entry.getValue();
-            int cantidad = entry.getKey();
+        for (Map.Entry<Producto, Integer> entry : carrito.getMap().entrySet()) {
+            Producto producto = entry.getKey();
+            int cantidad = entry.getValue();
             BigDecimal cantidadBigDecimal = BigDecimal.valueOf(cantidad);
             BigDecimal subtotal = producto.getPrecio().multiply(cantidadBigDecimal);
 
@@ -261,16 +261,16 @@ public class Pago extends javax.swing.JDialog {
 
         Ticket ticket = new Ticket(idTicket);
 
-        for (Map.Entry<Integer, Producto> entry : this.carrito.getMap().entrySet()) {
+        for (Map.Entry<Producto, Integer> entry : this.carrito.getMap().entrySet()) {
             DetalleTicketPK pk = new DetalleTicketPK();
             pk.setIdTicket(idTicket);
-            pk.setIdProducto(entry.getValue().getIdProducto());
+            pk.setIdProducto(entry.getKey().getIdProducto());
 
-            Producto producto = entry.getValue(); // Obtener el Producto
-            DetalleTicket dt = new DetalleTicket(pk, entry.getKey());
+            Producto producto = entry.getKey(); // Obtener el Producto
+            DetalleTicket dt = new DetalleTicket(pk, entry.getValue());
             dt.setProducto(producto); // Establecer el Producto
             dt.setTicket(ticket);
-            dt.setCantidadProducto(entry.getKey());
+            dt.setCantidadProducto(entry.getValue());
 
             lista.add(dt);
             dtj.create(dt);

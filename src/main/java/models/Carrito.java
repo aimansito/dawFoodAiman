@@ -12,20 +12,20 @@ import java.util.TreeMap;
  * @author aiman
  */
 public class Carrito {
-    private Map<Integer,Producto> carro ;
+    private Map<Producto,Integer> carro ;
 
-    public Carrito(Map<Integer, Producto> carro) {
+    public Carrito(Map<Producto, Integer> carro) {
         this.carro = new TreeMap<>();
     }
 
     public Carrito() {
     }
 
-    public Map<Integer, Producto> getCarro() {
+    public Map<Producto,Integer> getCarro() {
         return carro;
     }
 
-    public void setCarro(Map<Integer, Producto> carro) {
+    public void setCarro(Map<Producto,Integer> carro) {
         this.carro = carro;
     }
 
@@ -34,8 +34,8 @@ public class Carrito {
         StringBuilder sb = new StringBuilder();
         sb.append("Carrito{");
         sb.append("carro=").append(carro);
-        sb.append("Cantidad: ").append(this.carro.keySet());
-        sb.append("Producto: ").append(this.carro.values());
+        sb.append("Producto: ").append(this.carro.keySet());
+        sb.append("Cantidad: ").append(this.carro.values());
         sb.append('}');
         return sb.toString();
     }

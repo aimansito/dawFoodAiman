@@ -4,6 +4,7 @@
  */
 package views;
 
+import controllers.DetalleTicketJpaController;
 import controllers.ProductoJpaController;
 import controllers.exceptions.IllegalOrphanException;
 import controllers.exceptions.NonexistentEntityException;
@@ -16,6 +17,7 @@ import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 import modelo_tabla.ListaProducto;
 import modelo_tabla.ModeloProducto;
+import models.DetalleTicket;
 import models.Producto;
 
 /**
@@ -137,6 +139,9 @@ public class Crud extends javax.swing.JDialog {
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // TODO add your handling code here:
+        boolean prodEncontrado = false;
+        DetalleTicketJpaController dt = new DetalleTicketJpaController();
+        List<DetalleTicket> det = dt.findDetalleTicketEntities();
         ProductoJpaController prod = new ProductoJpaController();
         int fila = jTable1.getSelectedRow();
         if (fila == -1) {
@@ -146,17 +151,26 @@ public class Crud extends javax.swing.JDialog {
 
         int id = (Integer) this.jTable1.getValueAt(fila, 0);
 
-        try {
-            prod.destroy(id);
-            cargarDatosJTable();
-        } catch (IllegalOrphanException ex) {
-            Logger.getLogger(Crud.class.getName()).log(Level.SEVERE, null, ex);
-            JOptionPane.showMessageDialog(null, "Ha habido un error");
-        } catch (NonexistentEntityException ex) {
-            Logger.getLogger(Crud.class.getName()).log(Level.SEVERE, null, ex);
-            JOptionPane.showMessageDialog(null, "Este producto no existe ");
+        for (DetalleTicket d : det) {
+            if (d.getIdProducto().getIdProducto() == id) {
+                JOptionPane.showMessageDialog(null, "Este producto se encuentra en un ticket");
+                prodEncontrado = true;
+                break; 
+            }
         }
-
+        if (!prodEncontrado) {
+            try {
+                prod.destroy(id); 
+                cargarDatosJTable(); 
+            } catch (IllegalOrphanException ex) {
+                Logger.getLogger(Crud.class.getName()).log(Level.SEVERE, null, ex);
+                JOptionPane.showMessageDialog(null, "Ha habido un error");
+            } catch (NonexistentEntityException ex) {
+                Logger.getLogger(Crud.class.getName()).log(Level.SEVERE, null, ex);
+                JOptionPane.showMessageDialog(null, "Este producto no existe");
+            }
+           
+        }
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
@@ -179,15 +193,13 @@ public class Crud extends javax.swing.JDialog {
             //// Verifica que la tabla tiene al menos una columna
         } else if (this.jTable1.getColumnCount() == 0) {
             JOptionPane.showMessageDialog(null, "La tabla no tiene columnas");
-        
+
         } else {
-            System.out.println("fila seleccionada: "+fila);
+            System.out.println("fila seleccionada: " + fila);
             new Actualizar(this, true).setVisible(true);
             cargarDatosJTable();
         }
     }//GEN-LAST:event_jButton3ActionPerformed
-
-    
 
     public void cargarDatosJTable() {
 
@@ -208,7 +220,6 @@ public class Crud extends javax.swing.JDialog {
         }
 
         jTable1.setModel(modelo);
-        
 
     }
 

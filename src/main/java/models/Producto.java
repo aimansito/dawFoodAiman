@@ -37,7 +37,7 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "Producto.findByPrecio", query = "SELECT p FROM Producto p WHERE p.precio = :precio"),
     @NamedQuery(name = "Producto.findByStock", query = "SELECT p FROM Producto p WHERE p.stock = :stock"),
     @NamedQuery(name = "Producto.findByDescripcion", query = "SELECT p FROM Producto p WHERE p.descripcion = :descripcion")})
-public class Producto implements Serializable {
+public class Producto implements Serializable,Comparable<Producto> {
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -176,6 +176,11 @@ public class Producto implements Serializable {
         sb.append(", codTipoProducto=").append(codTipoProducto.getNomCat());
         sb.append('}');
         return sb.toString();
+    }
+
+    @Override
+    public int compareTo(Producto o) {
+        return Integer.compare(this.idProducto, o.idProducto);
     }
     
 }
