@@ -111,10 +111,15 @@ public class DetalleTicket implements Serializable {
         return true;
     }
 
-    @Override
-    public String toString() {
-        return "models.DetalleTicket[ detalleTicketPK=" + detalleTicketPK + " ]";
-    }
+//    @Override
+//    public String toString() {
+//        StringBuilder sb = new StringBuilder();
+//        sb.append("---------------Tacos Aiman Ticket---------------");{
+//        for (Object object : col) {
+//            
+//        }
+//    }
+//    }
 
     public void setIdProducto(Producto producto) {
         this.producto = producto;
