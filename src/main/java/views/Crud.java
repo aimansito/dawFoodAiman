@@ -208,6 +208,7 @@ public class Crud extends javax.swing.JDialog {
         }
 
         jTable1.setModel(modelo);
+        
 
     }
 

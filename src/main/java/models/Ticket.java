@@ -6,6 +6,7 @@ package models;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Date;
 import javax.persistence.Basic;
@@ -37,8 +38,11 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "Ticket.findAll", query = "SELECT t FROM Ticket t"),
     @NamedQuery(name = "Ticket.findByIdTicket", query = "SELECT t FROM Ticket t WHERE t.idTicket = :idTicket"),
     @NamedQuery(name = "Ticket.findByNumPedido", query = "SELECT t FROM Ticket t WHERE t.numPedido = :numPedido"),
-    @NamedQuery(name = "Ticket.findByImporteTotal", query = "SELECT t FROM Ticket t WHERE t.importeTotal = :importeTotal"),
-    @NamedQuery(name = "Ticket.findByFechaHora", query = "SELECT t FROM Ticket t WHERE t.fechaHora = :fechaHora")})
+    @NamedQuery(name = "Ticket.findMaxNumPedido", query = "SELECT MAX(t.numPedido) FROM Ticket t"),
+    @NamedQuery(name = "Ticket.findMaxIdPlusOne", query = "SELECT MAX(t.idTicket) + 1 FROM Ticket t"),
+    @NamedQuery(name = "Ticket.findByFechaHora", query = "SELECT t FROM Ticket t WHERE t.fechaHora = :fechaHora")
+
+})
 public class Ticket implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -61,7 +65,7 @@ public class Ticket implements Serializable {
     @JoinColumn(name = "idTPV", referencedColumnName = "idTPV")
     @ManyToOne(optional = false)
     private Tpv idTPV;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idTicket")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "ticket")
     private Collection<DetalleTicket> detalleTicketCollection;
 
     public Ticket() {
@@ -71,11 +75,11 @@ public class Ticket implements Serializable {
         this.idTicket = idTicket;
     }
 
-    public Ticket(Integer idTicket, int numPedido, BigDecimal importeTotal, Date fechaHora) {
-        this.idTicket = idTicket;
+    public Ticket(int numPedido, BigDecimal importeTotal, Date fechaHora, Tpv idTpv) {
         this.numPedido = numPedido;
         this.importeTotal = importeTotal;
         this.fechaHora = fechaHora;
+        this.idTPV = idTpv;
     }
 
     public Integer getIdTicket() {
@@ -149,7 +153,14 @@ public class Ticket implements Serializable {
 
     @Override
     public String toString() {
-        return "models.Ticket[ idTicket=" + idTicket + " ]";
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        return "Ticket{"
+                + "idTicket=" + idTicket
+                + ", numPedido=" + numPedido
+                + ", importeTotal=" + importeTotal
+                + ", fechaHora=" + (fechaHora != null ? dateFormat.format(fechaHora) : "null")
+                + ", TPV ubicacion=" + idTPV.getUbicacion()
+                + '}';
     }
-    
+
 }

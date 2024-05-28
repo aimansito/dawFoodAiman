@@ -5,6 +5,7 @@
 package controllers;
 
 import controllers.exceptions.NonexistentEntityException;
+import controllers.exceptions.PreexistingEntityException;
 import java.io.Serializable;
 import java.util.List;
 import javax.persistence.EntityManager;
@@ -15,6 +16,7 @@ import javax.persistence.Persistence;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 import models.DetalleTicket;
+import models.DetalleTicketPK;
 import models.Producto;
 import models.Ticket;
 
@@ -27,42 +29,44 @@ public class DetalleTicketJpaController implements Serializable {
     public DetalleTicketJpaController(EntityManagerFactory emf) {
         this.emf = emf;
     }
+    private EntityManagerFactory emf = null;
+
     // creo un constructor para poder tener una instancia de cada controller 
     // y asi hacer uso de los metodos de cada uno
-    public DetalleTicketJpaController(){
+    public DetalleTicketJpaController() {
         emf = Persistence.createEntityManagerFactory("dawFoodAimanXML");
     }
-    private EntityManagerFactory emf = null;
 
     public EntityManager getEntityManager() {
         return emf.createEntityManager();
     }
 
-    public void create(DetalleTicket detalleTicket) {
+    public void create(DetalleTicket detalleTicket) throws PreexistingEntityException, Exception {
         EntityManager em = null;
         try {
             em = getEntityManager();
             em.getTransaction().begin();
-            Producto idProducto = detalleTicket.getIdProducto();
-            if (idProducto != null) {
-                idProducto = em.getReference(idProducto.getClass(), idProducto.getIdProducto());
-                detalleTicket.setIdProducto(idProducto);
-            }
-            Ticket idTicket = detalleTicket.getIdTicket();
-            if (idTicket != null) {
-                idTicket = em.getReference(idTicket.getClass(), idTicket.getIdTicket());
-                detalleTicket.setIdTicket(idTicket);
-            }
+
+            // Obtener referencia al Producto asociado al DetalleTicket
+            Producto producto = em.getReference(Producto.class, detalleTicket.getProducto().getIdProducto());
+            detalleTicket.setIdProducto(producto);
+
+            // Obtener referencia al Ticket asociado al DetalleTicket
+            Ticket ticket = em.getReference(Ticket.class, detalleTicket.getTicket().getIdTicket());
+            detalleTicket.setTicket(ticket);
+
             em.persist(detalleTicket);
-            if (idProducto != null) {
-                idProducto.getDetalleTicketCollection().add(detalleTicket);
-                idProducto = em.merge(idProducto);
-            }
-            if (idTicket != null) {
-                idTicket.getDetalleTicketCollection().add(detalleTicket);
-                idTicket = em.merge(idTicket);
-            }
+
+            // Actualizar la colección de DetalleTicket en Producto y Ticket
+            producto.getDetalleTicketCollection().add(detalleTicket);
+            ticket.getDetalleTicketCollection().add(detalleTicket);
+
             em.getTransaction().commit();
+        } catch (Exception ex) {
+            if (findDetalleTicket(detalleTicket.getDetalleTicketPK()) != null) {
+                throw new PreexistingEntityException("DetalleTicket " + detalleTicket + " already exists.", ex);
+            }
+            throw ex;
         } finally {
             if (em != null) {
                 em.close();
@@ -71,45 +75,47 @@ public class DetalleTicketJpaController implements Serializable {
     }
 
     public void edit(DetalleTicket detalleTicket) throws NonexistentEntityException, Exception {
+        detalleTicket.getDetalleTicketPK().setIdTicket(detalleTicket.getTicket().getIdTicket());
+        detalleTicket.getDetalleTicketPK().setIdProducto(detalleTicket.getProducto().getIdProducto());
         EntityManager em = null;
         try {
             em = getEntityManager();
             em.getTransaction().begin();
-            DetalleTicket persistentDetalleTicket = em.find(DetalleTicket.class, detalleTicket.getCantidadProducto());
-            Producto idProductoOld = persistentDetalleTicket.getIdProducto();
-            Producto idProductoNew = detalleTicket.getIdProducto();
-            Ticket idTicketOld = persistentDetalleTicket.getIdTicket();
-            Ticket idTicketNew = detalleTicket.getIdTicket();
-            if (idProductoNew != null) {
-                idProductoNew = em.getReference(idProductoNew.getClass(), idProductoNew.getIdProducto());
-                detalleTicket.setIdProducto(idProductoNew);
+            DetalleTicket persistentDetalleTicket = em.find(DetalleTicket.class, detalleTicket.getDetalleTicketPK());
+            Producto productoOld = persistentDetalleTicket.getProducto();
+            Producto productoNew = detalleTicket.getProducto();
+            Ticket ticketOld = persistentDetalleTicket.getTicket();
+            Ticket ticketNew = detalleTicket.getTicket();
+            if (productoNew != null) {
+                productoNew = em.getReference(productoNew.getClass(), productoNew.getIdProducto());
+                detalleTicket.setProducto(productoNew);
             }
-            if (idTicketNew != null) {
-                idTicketNew = em.getReference(idTicketNew.getClass(), idTicketNew.getIdTicket());
-                detalleTicket.setIdTicket(idTicketNew);
+            if (ticketNew != null) {
+                ticketNew = em.getReference(ticketNew.getClass(), ticketNew.getIdTicket());
+                detalleTicket.setTicket(ticketNew);
             }
             detalleTicket = em.merge(detalleTicket);
-            if (idProductoOld != null && !idProductoOld.equals(idProductoNew)) {
-                idProductoOld.getDetalleTicketCollection().remove(detalleTicket);
-                idProductoOld = em.merge(idProductoOld);
+            if (productoOld != null && !productoOld.equals(productoNew)) {
+                productoOld.getDetalleTicketCollection().remove(detalleTicket);
+                productoOld = em.merge(productoOld);
             }
-            if (idProductoNew != null && !idProductoNew.equals(idProductoOld)) {
-                idProductoNew.getDetalleTicketCollection().add(detalleTicket);
-                idProductoNew = em.merge(idProductoNew);
+            if (productoNew != null && !productoNew.equals(productoOld)) {
+                productoNew.getDetalleTicketCollection().add(detalleTicket);
+                productoNew = em.merge(productoNew);
             }
-            if (idTicketOld != null && !idTicketOld.equals(idTicketNew)) {
-                idTicketOld.getDetalleTicketCollection().remove(detalleTicket);
-                idTicketOld = em.merge(idTicketOld);
+            if (ticketOld != null && !ticketOld.equals(ticketNew)) {
+                ticketOld.getDetalleTicketCollection().remove(detalleTicket);
+                ticketOld = em.merge(ticketOld);
             }
-            if (idTicketNew != null && !idTicketNew.equals(idTicketOld)) {
-                idTicketNew.getDetalleTicketCollection().add(detalleTicket);
-                idTicketNew = em.merge(idTicketNew);
+            if (ticketNew != null && !ticketNew.equals(ticketOld)) {
+                ticketNew.getDetalleTicketCollection().add(detalleTicket);
+                ticketNew = em.merge(ticketNew);
             }
             em.getTransaction().commit();
         } catch (Exception ex) {
             String msg = ex.getLocalizedMessage();
             if (msg == null || msg.length() == 0) {
-                Integer id = detalleTicket.getCantidadProducto();
+                DetalleTicketPK id = detalleTicket.getDetalleTicketPK();
                 if (findDetalleTicket(id) == null) {
                     throw new NonexistentEntityException("The detalleTicket with id " + id + " no longer exists.");
                 }
@@ -122,7 +128,7 @@ public class DetalleTicketJpaController implements Serializable {
         }
     }
 
-    public void destroy(Integer id) throws NonexistentEntityException {
+    public void destroy(DetalleTicketPK id) throws NonexistentEntityException {
         EntityManager em = null;
         try {
             em = getEntityManager();
@@ -130,19 +136,19 @@ public class DetalleTicketJpaController implements Serializable {
             DetalleTicket detalleTicket;
             try {
                 detalleTicket = em.getReference(DetalleTicket.class, id);
-                detalleTicket.getCantidadProducto();
+                detalleTicket.getDetalleTicketPK();
             } catch (EntityNotFoundException enfe) {
                 throw new NonexistentEntityException("The detalleTicket with id " + id + " no longer exists.", enfe);
             }
-            Producto idProducto = detalleTicket.getIdProducto();
-            if (idProducto != null) {
-                idProducto.getDetalleTicketCollection().remove(detalleTicket);
-                idProducto = em.merge(idProducto);
+            Producto producto = detalleTicket.getProducto();
+            if (producto != null) {
+                producto.getDetalleTicketCollection().remove(detalleTicket);
+                producto = em.merge(producto);
             }
-            Ticket idTicket = detalleTicket.getIdTicket();
-            if (idTicket != null) {
-                idTicket.getDetalleTicketCollection().remove(detalleTicket);
-                idTicket = em.merge(idTicket);
+            Ticket ticket = detalleTicket.getTicket();
+            if (ticket != null) {
+                ticket.getDetalleTicketCollection().remove(detalleTicket);
+                ticket = em.merge(ticket);
             }
             em.remove(detalleTicket);
             em.getTransaction().commit();
@@ -177,7 +183,7 @@ public class DetalleTicketJpaController implements Serializable {
         }
     }
 
-    public DetalleTicket findDetalleTicket(Integer id) {
+    public DetalleTicket findDetalleTicket(DetalleTicketPK id) {
         EntityManager em = getEntityManager();
         try {
             return em.find(DetalleTicket.class, id);
@@ -198,5 +204,5 @@ public class DetalleTicketJpaController implements Serializable {
             em.close();
         }
     }
-    
+
 }

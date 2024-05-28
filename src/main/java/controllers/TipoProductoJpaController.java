@@ -30,6 +30,8 @@ public class TipoProductoJpaController implements Serializable {
     public TipoProductoJpaController(EntityManagerFactory emf) {
         this.emf = emf;
     }
+    private EntityManagerFactory emf = null;
+
     // creo un constructor para poder tener una instancia de cada controller 
     // y asi hacer uso de los metodos de cada uno
 
@@ -37,8 +39,7 @@ public class TipoProductoJpaController implements Serializable {
         emf = Persistence.createEntityManagerFactory("dawFoodAimanXML");
     }
     
-    private EntityManagerFactory emf = null;
-
+    
     public EntityManager getEntityManager() {
         return emf.createEntityManager();
     }
@@ -186,29 +187,7 @@ public class TipoProductoJpaController implements Serializable {
             em.close();
         }
     }
-
-    public TipoProducto findTipoProducto(Integer id) {
-        EntityManager em = getEntityManager();
-        try {
-            return em.find(TipoProducto.class, id);
-        } finally {
-            em.close();
-        }
-    }
-
-    public int getTipoProductoCount() {
-        EntityManager em = getEntityManager();
-        try {
-            CriteriaQuery cq = em.getCriteriaBuilder().createQuery();
-            Root<TipoProducto> rt = cq.from(TipoProducto.class);
-            cq.select(em.getCriteriaBuilder().count(rt));
-            Query q = em.createQuery(cq);
-            return ((Long) q.getSingleResult()).intValue();
-        } finally {
-            em.close();
-        }
-    }  
-    // Método para obtener TipoProducto por nombre
+        // Método para obtener TipoProducto por nombre
     public TipoProducto getTipoProductoPorNombre(String nombre) {
         EntityManager em = getEntityManager();
         try {
@@ -230,14 +209,26 @@ public class TipoProductoJpaController implements Serializable {
             em.close();
         }
     }
-    public List<TipoProducto> findAllTipoProductos() {
+    public TipoProducto findTipoProducto(Integer id) {
         EntityManager em = getEntityManager();
         try {
-            Query query = em.createNamedQuery("TipoProducto.findAll");
-            return query.getResultList();
+            return em.find(TipoProducto.class, id);
         } finally {
             em.close();
         }
     }
 
+    public int getTipoProductoCount() {
+        EntityManager em = getEntityManager();
+        try {
+            CriteriaQuery cq = em.getCriteriaBuilder().createQuery();
+            Root<TipoProducto> rt = cq.from(TipoProducto.class);
+            cq.select(em.getCriteriaBuilder().count(rt));
+            Query q = em.createQuery(cq);
+            return ((Long) q.getSingleResult()).intValue();
+        } finally {
+            em.close();
+        }
+    }
+    
 }

@@ -31,6 +31,7 @@ public class ProductoJpaController implements Serializable {
     public ProductoJpaController(EntityManagerFactory emf) {
         this.emf = emf;
     }
+    private EntityManagerFactory emf = null;
 
     // creo un constructor para poder tener una instancia de cada controller 
     // y asi hacer uso de los metodos de cada uno
@@ -38,66 +39,67 @@ public class ProductoJpaController implements Serializable {
         emf = Persistence.createEntityManagerFactory("dawFoodAimanXML");
     }
 
-    private EntityManagerFactory emf = null;
-
     public EntityManager getEntityManager() {
         return emf.createEntityManager();
     }
 
     public void create(Producto producto) {
-        if (producto.getDetalleTicketCollection() == null) {
-            producto.setDetalleTicketCollection(new ArrayList<DetalleTicket>());
+    if (producto.getDetalleTicketCollection() == null) {
+        producto.setDetalleTicketCollection(new ArrayList<DetalleTicket>());
+    }
+    EntityManager em = null;
+    try {
+        em = getEntityManager();
+        em.getTransaction().begin();
+
+        // Verificar si ya existe un Producto con la misma descripción
+        Query query = em.createQuery("SELECT p FROM Producto p WHERE p.descripcion = :descripcion");
+        query.setParameter("descripcion", producto.getDescripcion());
+        List<Producto> existingProductos = query.getResultList();
+
+        if (!existingProductos.isEmpty()) {
+            // Si ya existe un Producto con la misma descripción, no se insertan los datos
+            JOptionPane.showMessageDialog(null, "Ya existe un Producto con esta descripción");
+        } else {
+            // Continuar con la inserción del nuevo Producto
+            TipoProducto codTipoProducto = producto.getCodTipoProducto();
+            if (codTipoProducto != null) {
+                codTipoProducto = em.getReference(codTipoProducto.getClass(), codTipoProducto.getCodTipoProducto());
+                producto.setCodTipoProducto(codTipoProducto);
+            }
+            Collection<DetalleTicket> attachedDetalleTicketCollection = new ArrayList<DetalleTicket>();
+            for (DetalleTicket detalleTicketCollectionDetalleTicketToAttach : producto.getDetalleTicketCollection()) {
+                detalleTicketCollectionDetalleTicketToAttach = em.getReference(
+                    detalleTicketCollectionDetalleTicketToAttach.getClass(),
+                    detalleTicketCollectionDetalleTicketToAttach.getDetalleTicketPK()
+                );
+                attachedDetalleTicketCollection.add(detalleTicketCollectionDetalleTicketToAttach);
+            }
+            producto.setDetalleTicketCollection(attachedDetalleTicketCollection);
+            em.persist(producto);
+            if (codTipoProducto != null) {
+                codTipoProducto.getProductoCollection().add(producto);
+                codTipoProducto = em.merge(codTipoProducto);
+            }
+            for (DetalleTicket detalleTicketCollectionDetalleTicket : producto.getDetalleTicketCollection()) {
+                Producto oldIdProductoOfDetalleTicketCollectionDetalleTicket = detalleTicketCollectionDetalleTicket.getIdProducto();
+                detalleTicketCollectionDetalleTicket.setIdProducto(producto);
+                detalleTicketCollectionDetalleTicket = em.merge(detalleTicketCollectionDetalleTicket);
+                if (oldIdProductoOfDetalleTicketCollectionDetalleTicket != null) {
+                    oldIdProductoOfDetalleTicketCollectionDetalleTicket.getDetalleTicketCollection().remove(detalleTicketCollectionDetalleTicket);
+                    oldIdProductoOfDetalleTicketCollectionDetalleTicket = em.merge(oldIdProductoOfDetalleTicketCollectionDetalleTicket);
+                }
+            }
+            em.getTransaction().commit();
+            JOptionPane.showMessageDialog(null, "Se ha añadido correctamente");
         }
-        EntityManager em = null;
-        try {
-            em = getEntityManager();
-            em.getTransaction().begin();
-
-            // Verificar si ya existe un Producto con la misma descripción
-            Query query = em.createQuery("SELECT p FROM Producto p WHERE p.descripcion = :descripcion");
-            query.setParameter("descripcion", producto.getDescripcion());
-            List<Producto> existingProductos = query.getResultList();
-
-            if (!existingProductos.isEmpty()) {
-                // Si ya existe un Producto con la misma descripción, no se insertan los datos
-                JOptionPane.showMessageDialog(null, "Ya existe un Producto con esta descripción");
-            } else {
-                // Continuar con la inserción del nuevo Producto
-                TipoProducto codTipoProducto = producto.getCodTipoProducto();
-                if (codTipoProducto != null) {
-                    codTipoProducto = em.getReference(codTipoProducto.getClass(), codTipoProducto.getCodTipoProducto());
-                    producto.setCodTipoProducto(codTipoProducto);
-                }
-                Collection<DetalleTicket> attachedDetalleTicketCollection = new ArrayList<DetalleTicket>();
-                for (DetalleTicket detalleTicketCollectionDetalleTicketToAttach : producto.getDetalleTicketCollection()) {
-                    detalleTicketCollectionDetalleTicketToAttach = em.getReference(detalleTicketCollectionDetalleTicketToAttach.getClass(), detalleTicketCollectionDetalleTicketToAttach.getCantidadProducto());
-                    attachedDetalleTicketCollection.add(detalleTicketCollectionDetalleTicketToAttach);
-                }
-                producto.setDetalleTicketCollection(attachedDetalleTicketCollection);
-                em.persist(producto);
-                if (codTipoProducto != null) {
-                    codTipoProducto.getProductoCollection().add(producto);
-                    codTipoProducto = em.merge(codTipoProducto);
-                }
-                for (DetalleTicket detalleTicketCollectionDetalleTicket : producto.getDetalleTicketCollection()) {
-                    Producto oldIdProductoOfDetalleTicketCollectionDetalleTicket = detalleTicketCollectionDetalleTicket.getIdProducto();
-                    detalleTicketCollectionDetalleTicket.setIdProducto(producto);
-                    detalleTicketCollectionDetalleTicket = em.merge(detalleTicketCollectionDetalleTicket);
-                    if (oldIdProductoOfDetalleTicketCollectionDetalleTicket != null) {
-                        oldIdProductoOfDetalleTicketCollectionDetalleTicket.getDetalleTicketCollection().remove(detalleTicketCollectionDetalleTicket);
-                        oldIdProductoOfDetalleTicketCollectionDetalleTicket = em.merge(oldIdProductoOfDetalleTicketCollectionDetalleTicket);
-                    }
-                }
-                em.getTransaction().commit();
-                JOptionPane.showMessageDialog(null, "Se ha añadido correctamente");
-
-            }
-        } finally {
-            if (em != null) {
-                em.close();
-            }
+    } finally {
+        if (em != null) {
+            em.close();
         }
     }
+}
+
 
     public void edit(Producto producto) throws NonexistentEntityException, Exception {
         EntityManager em = null;
@@ -121,7 +123,6 @@ public class ProductoJpaController implements Serializable {
             }
         }
     }
-
 //    public void edit(Producto producto) throws IllegalOrphanException, NonexistentEntityException, Exception {
 //        EntityManager em = null;
 //        try {
@@ -138,7 +139,7 @@ public class ProductoJpaController implements Serializable {
 //                    if (illegalOrphanMessages == null) {
 //                        illegalOrphanMessages = new ArrayList<String>();
 //                    }
-//                    illegalOrphanMessages.add("You must retain DetalleTicket " + detalleTicketCollectionOldDetalleTicket + " since its idProducto field is not nullable.");
+//                    illegalOrphanMessages.add("You must retain DetalleTicket " + detalleTicketCollectionOldDetalleTicket + " since its producto field is not nullable.");
 //                }
 //            }
 //            if (illegalOrphanMessages != null) {
@@ -150,7 +151,7 @@ public class ProductoJpaController implements Serializable {
 //            }
 //            Collection<DetalleTicket> attachedDetalleTicketCollectionNew = new ArrayList<DetalleTicket>();
 //            for (DetalleTicket detalleTicketCollectionNewDetalleTicketToAttach : detalleTicketCollectionNew) {
-//                detalleTicketCollectionNewDetalleTicketToAttach = em.getReference(detalleTicketCollectionNewDetalleTicketToAttach.getClass(), detalleTicketCollectionNewDetalleTicketToAttach.getCantidadProducto());
+//                detalleTicketCollectionNewDetalleTicketToAttach = em.getReference(detalleTicketCollectionNewDetalleTicketToAttach.getClass(), detalleTicketCollectionNewDetalleTicketToAttach.getDetalleTicketPK());
 //                attachedDetalleTicketCollectionNew.add(detalleTicketCollectionNewDetalleTicketToAttach);
 //            }
 //            detalleTicketCollectionNew = attachedDetalleTicketCollectionNew;
@@ -166,12 +167,12 @@ public class ProductoJpaController implements Serializable {
 //            }
 //            for (DetalleTicket detalleTicketCollectionNewDetalleTicket : detalleTicketCollectionNew) {
 //                if (!detalleTicketCollectionOld.contains(detalleTicketCollectionNewDetalleTicket)) {
-//                    Producto oldIdProductoOfDetalleTicketCollectionNewDetalleTicket = detalleTicketCollectionNewDetalleTicket.getIdProducto();
-//                    detalleTicketCollectionNewDetalleTicket.setIdProducto(producto);
+//                    Producto oldProductoOfDetalleTicketCollectionNewDetalleTicket = detalleTicketCollectionNewDetalleTicket.getProducto();
+//                    detalleTicketCollectionNewDetalleTicket.setProducto(producto);
 //                    detalleTicketCollectionNewDetalleTicket = em.merge(detalleTicketCollectionNewDetalleTicket);
-//                    if (oldIdProductoOfDetalleTicketCollectionNewDetalleTicket != null && !oldIdProductoOfDetalleTicketCollectionNewDetalleTicket.equals(producto)) {
-//                        oldIdProductoOfDetalleTicketCollectionNewDetalleTicket.getDetalleTicketCollection().remove(detalleTicketCollectionNewDetalleTicket);
-//                        oldIdProductoOfDetalleTicketCollectionNewDetalleTicket = em.merge(oldIdProductoOfDetalleTicketCollectionNewDetalleTicket);
+//                    if (oldProductoOfDetalleTicketCollectionNewDetalleTicket != null && !oldProductoOfDetalleTicketCollectionNewDetalleTicket.equals(producto)) {
+//                        oldProductoOfDetalleTicketCollectionNewDetalleTicket.getDetalleTicketCollection().remove(detalleTicketCollectionNewDetalleTicket);
+//                        oldProductoOfDetalleTicketCollectionNewDetalleTicket = em.merge(oldProductoOfDetalleTicketCollectionNewDetalleTicket);
 //                    }
 //                }
 //            }
@@ -191,6 +192,7 @@ public class ProductoJpaController implements Serializable {
 //            }
 //        }
 //    }
+
     public void destroy(Integer id) throws IllegalOrphanException, NonexistentEntityException {
         EntityManager em = null;
         try {
@@ -209,7 +211,7 @@ public class ProductoJpaController implements Serializable {
                 if (illegalOrphanMessages == null) {
                     illegalOrphanMessages = new ArrayList<String>();
                 }
-                illegalOrphanMessages.add("This Producto (" + producto + ") cannot be destroyed since the DetalleTicket " + detalleTicketCollectionOrphanCheckDetalleTicket + " in its detalleTicketCollection field has a non-nullable idProducto field.");
+                illegalOrphanMessages.add("This Producto (" + producto + ") cannot be destroyed since the DetalleTicket " + detalleTicketCollectionOrphanCheckDetalleTicket + " in its detalleTicketCollection field has a non-nullable producto field.");
             }
             if (illegalOrphanMessages != null) {
                 throw new IllegalOrphanException(illegalOrphanMessages);

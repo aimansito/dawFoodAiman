@@ -30,17 +30,17 @@ public class TpvJpaController implements Serializable {
     public TpvJpaController(EntityManagerFactory emf) {
         this.emf = emf;
     }
-    // creo un constructor para poder tener una instancia de cada controller 
-    // y asi hacer uso de los metodos de cada uno
-
-    public TpvJpaController() {
-        emf = Persistence.createEntityManagerFactory("dawFoodAimanXML");
-    }
-
     private EntityManagerFactory emf = null;
 
     public EntityManager getEntityManager() {
         return emf.createEntityManager();
+    }
+    
+     // creo un constructor para poder tener una instancia de cada controller 
+    // y asi hacer uso de los metodos de cada uno
+
+    public TpvJpaController() {
+        emf = Persistence.createEntityManagerFactory("dawFoodAimanXML");
     }
 
     public void create(Tpv tpv) {
@@ -220,5 +220,5 @@ public class TpvJpaController implements Serializable {
             em.close();
         }
     }
-
+    
 }

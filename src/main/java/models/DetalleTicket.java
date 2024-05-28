@@ -7,10 +7,8 @@ package models;
 import java.io.Serializable;
 import javax.persistence.Basic;
 import javax.persistence.Column;
+import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
@@ -27,57 +25,76 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "DetalleTicket.findAll", query = "SELECT d FROM DetalleTicket d"),
+    @NamedQuery(name = "DetalleTicket.findByIdTicket", query = "SELECT d FROM DetalleTicket d WHERE d.detalleTicketPK.idTicket = :idTicket"),
+    @NamedQuery(name = "DetalleTicket.findByIdProducto", query = "SELECT d FROM DetalleTicket d WHERE d.detalleTicketPK.idProducto = :idProducto"),
     @NamedQuery(name = "DetalleTicket.findByCantidadProducto", query = "SELECT d FROM DetalleTicket d WHERE d.cantidadProducto = :cantidadProducto")})
 public class DetalleTicket implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @EmbeddedId
+    protected DetalleTicketPK detalleTicketPK;
     @Basic(optional = false)
     @Column(name = "cantidadProducto")
-    private Integer cantidadProducto;
-    @JoinColumn(name = "idProducto", referencedColumnName = "idProducto")
+    private int cantidadProducto;
+    @JoinColumn(name = "idProducto", referencedColumnName = "idProducto", insertable = false, updatable = false)
     @ManyToOne(optional = false)
-    private Producto idProducto;
-    @JoinColumn(name = "idTicket", referencedColumnName = "idTicket")
+    private Producto producto;
+    @JoinColumn(name = "idTicket", referencedColumnName = "idTicket", insertable = false, updatable = false)
     @ManyToOne(optional = false)
-    private Ticket idTicket;
+    private Ticket ticket;
 
     public DetalleTicket() {
     }
 
-    public DetalleTicket(Integer cantidadProducto) {
+    public DetalleTicket(DetalleTicketPK detalleTicketPK) {
+        this.detalleTicketPK = detalleTicketPK;
+    }
+
+    public DetalleTicket(DetalleTicketPK detalleTicketPK, int cantidadProducto) {
+        this.detalleTicketPK = detalleTicketPK;
         this.cantidadProducto = cantidadProducto;
     }
 
-    public Integer getCantidadProducto() {
+    public DetalleTicket(int idTicket, int idProducto) {
+        this.detalleTicketPK = new DetalleTicketPK(idTicket, idProducto);
+    }
+
+    public DetalleTicketPK getDetalleTicketPK() {
+        return detalleTicketPK;
+    }
+
+    public void setDetalleTicketPK(DetalleTicketPK detalleTicketPK) {
+        this.detalleTicketPK = detalleTicketPK;
+    }
+
+    public int getCantidadProducto() {
         return cantidadProducto;
     }
 
-    public void setCantidadProducto(Integer cantidadProducto) {
+    public void setCantidadProducto(int cantidadProducto) {
         this.cantidadProducto = cantidadProducto;
     }
 
-    public Producto getIdProducto() {
-        return idProducto;
+    public Producto getProducto() {
+        return producto;
     }
 
-    public void setIdProducto(Producto idProducto) {
-        this.idProducto = idProducto;
+    public void setProducto(Producto producto) {
+        this.producto = producto;
     }
 
-    public Ticket getIdTicket() {
-        return idTicket;
+    public Ticket getTicket() {
+        return ticket;
     }
 
-    public void setIdTicket(Ticket idTicket) {
-        this.idTicket = idTicket;
+    public void setTicket(Ticket ticket) {
+        this.ticket = ticket;
     }
 
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (cantidadProducto != null ? cantidadProducto.hashCode() : 0);
+        hash += (detalleTicketPK != null ? detalleTicketPK.hashCode() : 0);
         return hash;
     }
 
@@ -88,7 +105,7 @@ public class DetalleTicket implements Serializable {
             return false;
         }
         DetalleTicket other = (DetalleTicket) object;
-        if ((this.cantidadProducto == null && other.cantidadProducto != null) || (this.cantidadProducto != null && !this.cantidadProducto.equals(other.cantidadProducto))) {
+        if ((this.detalleTicketPK == null && other.detalleTicketPK != null) || (this.detalleTicketPK != null && !this.detalleTicketPK.equals(other.detalleTicketPK))) {
             return false;
         }
         return true;
@@ -96,7 +113,15 @@ public class DetalleTicket implements Serializable {
 
     @Override
     public String toString() {
-        return "models.DetalleTicket[ cantidadProducto=" + cantidadProducto + " ]";
+        return "models.DetalleTicket[ detalleTicketPK=" + detalleTicketPK + " ]";
+    }
+
+    public void setIdProducto(Producto producto) {
+        this.producto = producto;
+    }
+
+    public Producto getIdProducto() {
+        return this.producto = producto;
     }
     
 }

@@ -30,18 +30,18 @@ public class TicketJpaController implements Serializable {
     public TicketJpaController(EntityManagerFactory emf) {
         this.emf = emf;
     }
+    private EntityManagerFactory emf = null;
 
+    public EntityManager getEntityManager() {
+        return emf.createEntityManager();
+    }
+    
     // creo un constructor para poder tener una instancia de cada controller 
     // y asi hacer uso de los metodos de cada uno
     public TicketJpaController() {
         emf = Persistence.createEntityManagerFactory("dawFoodAimanXML");
     }
     
-    private EntityManagerFactory emf = null;
-
-    public EntityManager getEntityManager() {
-        return emf.createEntityManager();
-    }
 
     public void create(Ticket ticket) {
         if (ticket.getDetalleTicketCollection() == null) {
@@ -58,7 +58,7 @@ public class TicketJpaController implements Serializable {
             }
             Collection<DetalleTicket> attachedDetalleTicketCollection = new ArrayList<DetalleTicket>();
             for (DetalleTicket detalleTicketCollectionDetalleTicketToAttach : ticket.getDetalleTicketCollection()) {
-                detalleTicketCollectionDetalleTicketToAttach = em.getReference(detalleTicketCollectionDetalleTicketToAttach.getClass(), detalleTicketCollectionDetalleTicketToAttach.getCantidadProducto());
+                detalleTicketCollectionDetalleTicketToAttach = em.getReference(detalleTicketCollectionDetalleTicketToAttach.getClass(), detalleTicketCollectionDetalleTicketToAttach.getDetalleTicketPK());
                 attachedDetalleTicketCollection.add(detalleTicketCollectionDetalleTicketToAttach);
             }
             ticket.setDetalleTicketCollection(attachedDetalleTicketCollection);
@@ -68,12 +68,12 @@ public class TicketJpaController implements Serializable {
                 idTPV = em.merge(idTPV);
             }
             for (DetalleTicket detalleTicketCollectionDetalleTicket : ticket.getDetalleTicketCollection()) {
-                Ticket oldIdTicketOfDetalleTicketCollectionDetalleTicket = detalleTicketCollectionDetalleTicket.getIdTicket();
-                detalleTicketCollectionDetalleTicket.setIdTicket(ticket);
+                Ticket oldTicketOfDetalleTicketCollectionDetalleTicket = detalleTicketCollectionDetalleTicket.getTicket();
+                detalleTicketCollectionDetalleTicket.setTicket(ticket);
                 detalleTicketCollectionDetalleTicket = em.merge(detalleTicketCollectionDetalleTicket);
-                if (oldIdTicketOfDetalleTicketCollectionDetalleTicket != null) {
-                    oldIdTicketOfDetalleTicketCollectionDetalleTicket.getDetalleTicketCollection().remove(detalleTicketCollectionDetalleTicket);
-                    oldIdTicketOfDetalleTicketCollectionDetalleTicket = em.merge(oldIdTicketOfDetalleTicketCollectionDetalleTicket);
+                if (oldTicketOfDetalleTicketCollectionDetalleTicket != null) {
+                    oldTicketOfDetalleTicketCollectionDetalleTicket.getDetalleTicketCollection().remove(detalleTicketCollectionDetalleTicket);
+                    oldTicketOfDetalleTicketCollectionDetalleTicket = em.merge(oldTicketOfDetalleTicketCollectionDetalleTicket);
                 }
             }
             em.getTransaction().commit();
@@ -100,7 +100,7 @@ public class TicketJpaController implements Serializable {
                     if (illegalOrphanMessages == null) {
                         illegalOrphanMessages = new ArrayList<String>();
                     }
-                    illegalOrphanMessages.add("You must retain DetalleTicket " + detalleTicketCollectionOldDetalleTicket + " since its idTicket field is not nullable.");
+                    illegalOrphanMessages.add("You must retain DetalleTicket " + detalleTicketCollectionOldDetalleTicket + " since its ticket field is not nullable.");
                 }
             }
             if (illegalOrphanMessages != null) {
@@ -112,7 +112,7 @@ public class TicketJpaController implements Serializable {
             }
             Collection<DetalleTicket> attachedDetalleTicketCollectionNew = new ArrayList<DetalleTicket>();
             for (DetalleTicket detalleTicketCollectionNewDetalleTicketToAttach : detalleTicketCollectionNew) {
-                detalleTicketCollectionNewDetalleTicketToAttach = em.getReference(detalleTicketCollectionNewDetalleTicketToAttach.getClass(), detalleTicketCollectionNewDetalleTicketToAttach.getCantidadProducto());
+                detalleTicketCollectionNewDetalleTicketToAttach = em.getReference(detalleTicketCollectionNewDetalleTicketToAttach.getClass(), detalleTicketCollectionNewDetalleTicketToAttach.getDetalleTicketPK());
                 attachedDetalleTicketCollectionNew.add(detalleTicketCollectionNewDetalleTicketToAttach);
             }
             detalleTicketCollectionNew = attachedDetalleTicketCollectionNew;
@@ -128,12 +128,12 @@ public class TicketJpaController implements Serializable {
             }
             for (DetalleTicket detalleTicketCollectionNewDetalleTicket : detalleTicketCollectionNew) {
                 if (!detalleTicketCollectionOld.contains(detalleTicketCollectionNewDetalleTicket)) {
-                    Ticket oldIdTicketOfDetalleTicketCollectionNewDetalleTicket = detalleTicketCollectionNewDetalleTicket.getIdTicket();
-                    detalleTicketCollectionNewDetalleTicket.setIdTicket(ticket);
+                    Ticket oldTicketOfDetalleTicketCollectionNewDetalleTicket = detalleTicketCollectionNewDetalleTicket.getTicket();
+                    detalleTicketCollectionNewDetalleTicket.setTicket(ticket);
                     detalleTicketCollectionNewDetalleTicket = em.merge(detalleTicketCollectionNewDetalleTicket);
-                    if (oldIdTicketOfDetalleTicketCollectionNewDetalleTicket != null && !oldIdTicketOfDetalleTicketCollectionNewDetalleTicket.equals(ticket)) {
-                        oldIdTicketOfDetalleTicketCollectionNewDetalleTicket.getDetalleTicketCollection().remove(detalleTicketCollectionNewDetalleTicket);
-                        oldIdTicketOfDetalleTicketCollectionNewDetalleTicket = em.merge(oldIdTicketOfDetalleTicketCollectionNewDetalleTicket);
+                    if (oldTicketOfDetalleTicketCollectionNewDetalleTicket != null && !oldTicketOfDetalleTicketCollectionNewDetalleTicket.equals(ticket)) {
+                        oldTicketOfDetalleTicketCollectionNewDetalleTicket.getDetalleTicketCollection().remove(detalleTicketCollectionNewDetalleTicket);
+                        oldTicketOfDetalleTicketCollectionNewDetalleTicket = em.merge(oldTicketOfDetalleTicketCollectionNewDetalleTicket);
                     }
                 }
             }
@@ -172,7 +172,7 @@ public class TicketJpaController implements Serializable {
                 if (illegalOrphanMessages == null) {
                     illegalOrphanMessages = new ArrayList<String>();
                 }
-                illegalOrphanMessages.add("This Ticket (" + ticket + ") cannot be destroyed since the DetalleTicket " + detalleTicketCollectionOrphanCheckDetalleTicket + " in its detalleTicketCollection field has a non-nullable idTicket field.");
+                illegalOrphanMessages.add("This Ticket (" + ticket + ") cannot be destroyed since the DetalleTicket " + detalleTicketCollectionOrphanCheckDetalleTicket + " in its detalleTicketCollection field has a non-nullable ticket field.");
             }
             if (illegalOrphanMessages != null) {
                 throw new IllegalOrphanException(illegalOrphanMessages);
@@ -232,6 +232,17 @@ public class TicketJpaController implements Serializable {
             cq.select(em.getCriteriaBuilder().count(rt));
             Query q = em.createQuery(cq);
             return ((Long) q.getSingleResult()).intValue();
+        } finally {
+            em.close();
+        }
+    }
+    
+    public int findNumPedidoMax() {
+        EntityManager em = getEntityManager();
+        try {
+            Query query = em.createNamedQuery("Ticket.findMaxNumPedido");
+            
+            return (Integer) query.getSingleResult();
         } finally {
             em.close();
         }

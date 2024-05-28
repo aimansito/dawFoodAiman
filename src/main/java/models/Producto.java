@@ -60,7 +60,7 @@ public class Producto implements Serializable {
     @JoinColumn(name = "codTipoProducto", referencedColumnName = "codTipoProducto")
     @ManyToOne(optional = false)
     private TipoProducto codTipoProducto;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idProducto")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "producto")
     private Collection<DetalleTicket> detalleTicketCollection;
 
     public Producto() {
@@ -177,4 +177,5 @@ public class Producto implements Serializable {
         sb.append('}');
         return sb.toString();
     }
+    
 }

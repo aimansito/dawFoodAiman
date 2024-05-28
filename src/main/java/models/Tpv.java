@@ -132,6 +132,7 @@ public class Tpv implements Serializable {
         return true;
     }
 
+    
     @Override
     public String toString() {
         return "idTPV:" + idTPV + "Ubicación: "+ ubicacion + " Fecha: "+ fechaHora + "Contraseña: "+contraseña;

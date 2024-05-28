@@ -4,11 +4,27 @@
  */
 package views;
 
+import controllers.DetalleTicketJpaController;
 import controllers.ProductoJpaController;
+import controllers.TicketJpaController;
+import controllers.TpvJpaController;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import javax.persistence.EntityManager;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
+import models.DetalleTicket;
+import models.DetalleTicketPK;
 import models.Producto;
+import models.Ticket;
+import models.Tpv;
 
 /**
  *
@@ -17,18 +33,19 @@ import models.Producto;
 public class CarritoV extends javax.swing.JDialog {
 
     private Escalar escalar = new Escalar();
-    private Comprar padre; 
-    
-    public CarritoV(Comprar parent, boolean modal) {
+    private Comprar padre;
+    private Map<Integer,Producto> map;
+
+    public CarritoV(Comprar parent, boolean modal,Map<Integer,Producto> map) {
         super(parent, modal);
-        padre = parent ; 
+        padre = parent;
         this.setLocationRelativeTo(null);
         initComponents();
         escalar.escalarLabel(jLabel1, "/images/fondo2.png");
-//        cargarDatosJTable();
+//        cargarDatosJTable()
+        this.map = map;
     }
 
-    
 //    private void cargarDatosJTable() {
 //
 //        ProductoJpaController prod = new ProductoJpaController();
@@ -108,7 +125,7 @@ public class CarritoV extends javax.swing.JDialog {
                 jButton3ActionPerformed(evt);
             }
         });
-        jPanel1.add(jButton3, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 524, 100, 30));
+        jPanel1.add(jButton3, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 430, 100, 30));
 
         jButton4.setBackground(new java.awt.Color(0, 0, 0));
         jButton4.setFont(new java.awt.Font("Liberation Sans", 1, 15)); // NOI18N
@@ -127,6 +144,11 @@ public class CarritoV extends javax.swing.JDialog {
         jButton5.setForeground(new java.awt.Color(51, 255, 51));
         jButton5.setText("COMPRAR");
         jButton5.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(225, 166, 51)));
+        jButton5.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton5ActionPerformed(evt);
+            }
+        });
         jPanel1.add(jButton5, new org.netbeans.lib.awtextra.AbsoluteConstraints(410, 324, 150, 50));
 
         jLabel1.setText("jLabel1");
@@ -150,15 +172,16 @@ public class CarritoV extends javax.swing.JDialog {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
-        if(padre.getMap().isEmpty()){
+        if (padre.getMap().isEmpty()) {
             JOptionPane.showMessageDialog(null, "No hay productos en el carrito");
-        }else{
-            JOptionPane.showMessageDialog(null, padre.getMap());
+        } else {
+
         }
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         // TODO add your handling code here:
+        padre.cargarDatosJTable();
         this.dispose();
     }//GEN-LAST:event_jButton3ActionPerformed
 
@@ -167,7 +190,90 @@ public class CarritoV extends javax.swing.JDialog {
         padre.getMap().clear();
     }//GEN-LAST:event_jButton4ActionPerformed
 
-    
+    private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
+        // TODO add your handling code here:
+//        Date fechaActual = new Date();
+//        TicketJpaController t = new TicketJpaController();
+//        TpvJpaController tpv = new TpvJpaController();
+//        tpv.findTpv(1);
+//        Tpv tpv1 =  tpv.findTpv(1);
+//        int numPedido =  t.findNumPedidoMax()+1;
+//        BigDecimal importeTotal = calcularImporteTotal(); 
+//        Ticket ticket  = new Ticket(numPedido,importeTotal,fechaActual,tpv1);
+//        t.create(ticket);
+//        System.out.println(ticket);
+        new Pago(this, true, padre.getMap()).setVisible(true);
+    }//GEN-LAST:event_jButton5ActionPerformed
+    public BigDecimal calcularImporteTotal() {
+        BigDecimal total = BigDecimal.ZERO;
+        for (Map.Entry<Integer, Producto> entry : padre.getMap().entrySet()) {
+            Producto producto = entry.getValue();
+            int cantidad = entry.getKey();
+            BigDecimal cantidadBigDecimal = BigDecimal.valueOf(cantidad);
+            BigDecimal subtotal = producto.getPrecio().multiply(cantidadBigDecimal);
+
+            // Sumo el subtotal al total 
+            total = total.add(subtotal);
+
+            // aplico el iva segun el que tenga
+            if (producto.getIva().equalsIgnoreCase("21")) {
+                BigDecimal iva21 = subtotal.multiply(BigDecimal.valueOf(0.21));
+                total = total.add(iva21);
+            } else if (producto.getIva().equalsIgnoreCase("10")) {
+                BigDecimal iva10 = subtotal.multiply(BigDecimal.valueOf(0.10));
+                total = total.add(iva10);
+            }
+        }
+        return total;
+    }
+
+    public Map<Integer,Producto> getMap(){
+        return this.map;
+    }
+//    public Ticket crearTicket() throws Exception {
+//        // Obtener la fecha actual y otros datos necesarios
+//        Date fechaActual = new Date();
+//        TpvJpaController tpvController = new TpvJpaController();
+//        ProductoJpaController prod = new ProductoJpaController();
+//        Tpv tpv = tpvController.findTpv(1); // Suponiendo que siempre es el TPV con ID 1
+//        BigDecimal importeTotal = calcularImporteTotal().setScale(2, RoundingMode.HALF_UP);
+//        TicketJpaController ticketController = new TicketJpaController();
+//        int numPedido = ticketController.findNumPedidoMax() + 1;
+//        for (Map.Entry<Integer, Producto> entry : padre.getMap().entrySet()) {
+//            Integer num = entry.getKey();
+//            Producto producto = entry.getValue();
+//            nuevoStock = producto.getStock() - num;
+//            producto.setStock(nuevoStock);
+//            prod.edit(producto);
+//        }
+//        // Crear el Ticket con los datos obtenidos
+//        Ticket ticket = new Ticket(numPedido, importeTotal, fechaActual, tpv);
+//        ticketController.create(ticket);
+//
+//        return ticket;
+//    }
+//
+//    public List<DetalleTicket> crearDetalleTicket() throws Exception {
+//        int idTicket = crearTicket().getIdTicket();
+//        System.out.println(idTicket);
+//        DetalleTicketJpaController detalleTicketController = new DetalleTicketJpaController();
+//        List<DetalleTicket> lista = new ArrayList<>();
+//
+//        for (Map.Entry<Integer, Producto> entry : padre.getMap().entrySet()) {
+//            Producto producto = entry.getValue();
+//            int cantidad = entry.getKey();
+//
+//            DetalleTicketPK pk = new DetalleTicketPK();
+//            pk.setIdTicket(idTicket);
+//            pk.setIdProducto(producto.getIdProducto());
+//
+//            DetalleTicket detalleTicket = new DetalleTicket(pk, cantidad);
+//            detalleTicketController.create(detalleTicket);
+//            lista.add(detalleTicket);
+//        }
+//        return lista;
+//    }
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
