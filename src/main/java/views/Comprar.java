@@ -351,7 +351,6 @@ public class Comprar extends javax.swing.JDialog {
     private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
         // TODO add your handling code here:
         new CarritoV(this, true,this.carritoMap).setVisible(true);
-        jTable1.setEnabled(false);
     }//GEN-LAST:event_jButton6ActionPerformed
 
     public void cargarDatosJTable() {
@@ -409,6 +408,10 @@ public class Comprar extends javax.swing.JDialog {
 
     public Map<Integer, Producto> getMap() {
         return this.carritoMap;
+    }
+    
+    public String getMensaje(){
+        return this.mensaje;
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

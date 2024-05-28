@@ -35,6 +35,7 @@ public class CarritoV extends javax.swing.JDialog {
     private Escalar escalar = new Escalar();
     private Comprar padre;
     private Map<Integer,Producto> map;
+    private String mensaje;
 
     public CarritoV(Comprar parent, boolean modal,Map<Integer,Producto> map) {
         super(parent, modal);
@@ -44,6 +45,7 @@ public class CarritoV extends javax.swing.JDialog {
         escalar.escalarLabel(jLabel1, "/images/fondo2.png");
 //        cargarDatosJTable()
         this.map = map;
+        this.mensaje = "";
     }
 
 //    private void cargarDatosJTable() {
@@ -175,7 +177,13 @@ public class CarritoV extends javax.swing.JDialog {
         if (padre.getMap().isEmpty()) {
             JOptionPane.showMessageDialog(null, "No hay productos en el carrito");
         } else {
-
+            this.mensaje = "";
+            for (Map.Entry<Integer, Producto> entry : padre.getMap().entrySet()) {
+                    int cantidadProducto = entry.getKey();
+                    Producto producto = entry.getValue();
+                    this.mensaje += "Producto: " + producto.getDescripcion() + ", Cantidad: " + cantidadProducto + "\n";
+                }
+                JOptionPane.showMessageDialog(null, mensaje);
         }
     }//GEN-LAST:event_jButton1ActionPerformed
 

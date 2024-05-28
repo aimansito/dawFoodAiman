@@ -5,6 +5,8 @@
 package models;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.Random;
 
 /**
@@ -30,13 +32,13 @@ public class Tarjeta {
     }
 
     //genera una tarjeta automática 
-    public static Tarjeta generarTarjeta(String nombre) {;
-        int numTarjeta = numTarjetaAleatorio();
-        int numCVV = numCvvAleatorio();
-        double saldo = saldoCuentaAleatorio();
-        Tarjeta t1 = new Tarjeta(nombre, numTarjeta, LocalDate.now().plusYears(new Random().nextInt(6)), numCVV, Math.round(saldo * 100.0) / 100.0);
-        return t1;
-    }
+//    public static Tarjeta generarTarjeta(String nombre) {;
+//        int numTarjeta = numTarjetaAleatorio();
+//        int numCVV = numCvvAleatorio();
+//        double saldo = saldoCuentaAleatorio();
+//        Tarjeta t1 = new Tarjeta(nombre, numTarjeta, LocalDate.now().plusYears(new Random().nextInt(6)), numCVV, Math.round(saldo * 100.0) / 100.0);
+//        return t1;
+//    }
 
     private static int numTarjetaAleatorio() {
         return new Random().nextInt(1000,10000);
@@ -86,9 +88,10 @@ public class Tarjeta {
         sb.append("Tarjeta{");
         sb.append("nombre del titular=").append(nombreTitular);
         sb.append(", numero de la tarjeta=").append(numeroTarjeta);
-        sb.append(", fecha de vencimiento=").append(fechaVencimiento.getMonthValue());
-        sb.append("/");
-        sb.append(fechaVencimiento.getYear());
+//        sb.append(", fecha de vencimiento=").append(fechaVencimiento.getMonthValue());
+//        sb.append("/");
+//        sb.append(fechaVencimiento.getYear());
+        sb.append("fecha vencimiento=").append(fechaVencimiento);
 
         sb.append(", CVV=").append(CVV);
         sb.append(", saldo en la tarjeta=").append(saldoTarjeta);

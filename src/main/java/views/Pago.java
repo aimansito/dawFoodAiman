@@ -8,16 +8,20 @@ import controllers.DetalleTicketJpaController;
 import controllers.ProductoJpaController;
 import controllers.TicketJpaController;
 import controllers.TpvJpaController;
+import models.Tarjeta;
 import java.awt.Color;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.Month;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -51,7 +55,7 @@ public class Pago extends javax.swing.JDialog {
         this.carrito = parent;
         this.setLocationRelativeTo(null);
         this.productos = map;
-        this.tarjeta = new Tarjeta("Aiman", 3041, new Date(2024, 12, 12), 433, 2100.00);
+        this.tarjeta = new Tarjeta("Aiman", 3041, LocalDate.of(2029, 5, 5), 433, 2100.00);
         mostrarDatosEditar();
         this.nuevoStock = 0;
     }
@@ -277,15 +281,15 @@ public class Pago extends javax.swing.JDialog {
 
     private void mostrarDatosEditar() {
         try {
-            Date date = tarjeta.getFechaVencimiento();
-            SimpleDateFormat dt = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-            String fechaString = dt.format(date);
+            LocalDate date = tarjeta.getFechaVencimiento();
+            final DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd.MMMM uuuu", Locale.ENGLISH);
+            String fecha = dtf.format(date);
 
             // Llena los campos del formulario con los datos del producto
             jTextField1.setText(tarjeta.getNombreTitular());
             jTextField1.setBackground(Color.GRAY);
             jTextField2.setText(String.valueOf(tarjeta.getNumeroTarjeta()));
-            jTextField3.setText(fechaString);
+            jTextField3.setText(fecha);
             jTextField4.setText(String.valueOf(tarjeta.getCVV()));
 
         } catch (ArrayIndexOutOfBoundsException e) {

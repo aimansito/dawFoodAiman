@@ -4,6 +4,9 @@
  */
 package models;
 
+import controllers.DetalleTicketJpaController;
+import controllers.ProductoJpaController;
+import controllers.TicketJpaController;
 import java.io.Serializable;
 import javax.persistence.Basic;
 import javax.persistence.Column;
@@ -111,15 +114,23 @@ public class DetalleTicket implements Serializable {
         return true;
     }
 
-//    @Override
-//    public String toString() {
-//        StringBuilder sb = new StringBuilder();
-//        sb.append("---------------Tacos Aiman Ticket---------------");{
-//        for (Object object : col) {
-//            
-//        }
-//    }
-//    }
+    @Override
+    public String toString() {
+        DetalleTicketJpaController dt = new DetalleTicketJpaController();
+        ProductoJpaController prod = new ProductoJpaController();
+        TicketJpaController tk = new TicketJpaController();
+        StringBuilder sb = new StringBuilder();
+        Ticket ticket = tk.findTicket(getDetalleTicketPK().getIdTicket());
+        Producto p = prod.findProducto(getDetalleTicketPK().getIdProducto());
+        sb.append("\n---------------Tacos Aiman Ticket---------------\n");
+        sb.append("ID Ticket: ").append(this.detalleTicketPK.getIdTicket()).append("\n");
+        sb.append("ID Producto: ").append(this.detalleTicketPK.getIdProducto()).append("\n");
+        sb.append("Descripción: ").append(prod.findProducto(getProducto().getIdProducto()).getDescripcion()).append("\n");
+        sb.append("Precio: ").append(p.getDescripcion()).append("\n");
+        sb.append("Precio final: ").append(ticket.getImporteTotal()).append("\n");
+        
+        return sb.toString();
+    }
 
     public void setIdProducto(Producto producto) {
         this.producto = producto;
@@ -128,5 +139,4 @@ public class DetalleTicket implements Serializable {
     public Producto getIdProducto() {
         return this.producto = producto;
     }
-    
 }
