@@ -46,6 +46,7 @@ public class TipoProducto implements Serializable {
     @Basic(optional = false)
     @Column(name = "tipoProdDescripcion")
     private String tipoProdDescripcion;
+    // relacion de uno a muchos , quiere decir que tipoProducto contiene muchos productos
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "codTipoProducto")
     private Collection<Producto> productoCollection;
 

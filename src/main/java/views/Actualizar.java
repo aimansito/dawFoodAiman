@@ -232,6 +232,7 @@ public class Actualizar extends javax.swing.JDialog {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
+        // TODO add your handling code here:
         boolean prodEncontrado = false;
         DetalleTicketJpaController dt = new DetalleTicketJpaController();
         List<DetalleTicket> det = dt.findDetalleTicketEntities();
@@ -241,8 +242,21 @@ public class Actualizar extends javax.swing.JDialog {
         TipoProducto tProd = tipoProd.getTipoProductoPorNombre(tipo);
         String iva = (String) jComboBox1.getSelectedItem().toString();
         BigDecimal precio = new BigDecimal(jTextField3.getText());
-        Producto p1 = new Producto(Integer.parseInt(jTextField1.getText()), iva, precio, Integer.parseInt(jTextField4.getText()), jTextField5.getText(), tProd);
         padre.getListaProductos();
+        
+        int stock = 0;
+
+        try {
+            stock = Integer.parseInt(jTextField4.getText());
+            precio = new BigDecimal(jTextField3.getText()).abs();
+        } catch (NumberFormatException nfe) {
+            JOptionPane.showMessageDialog(null, "Introduce un número válido para los campos");
+            return;
+        } catch (NullPointerException npe) {
+            JOptionPane.showMessageDialog(null, "No se ha introducido ningún dato");
+            return; 
+        }Math.abs(stock);
+        Producto p1 = new Producto(Integer.parseInt(jTextField1.getText()), iva, precio, Math.abs(stock), jTextField5.getText(), tProd);
         for (DetalleTicket d : det) {
             if (d.getIdProducto().getIdProducto() == p1.getIdProducto()) {
                 JOptionPane.showMessageDialog(null, "Este producto se encuentra en un ticket");
@@ -251,17 +265,21 @@ public class Actualizar extends javax.swing.JDialog {
             }
         }
         if (!prodEncontrado) {
-            try {
-                prod.edit(p1);
+            if (jTextField5.getText().isEmpty()) {
+                JOptionPane.showMessageDialog(null, "Rellena la descripción");
+            } else {
+                try {
+                    prod.edit(p1);
 
 //        Producto p1 = new Producto(iva, BigDecimal.ZERO, ABORT, descripcion, codTipoProducto)
-            } catch (NonexistentEntityException ex) {
-                Logger.getLogger(Actualizar.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (Exception ex) {
-                Logger.getLogger(Actualizar.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (NonexistentEntityException ex) {
+                    Logger.getLogger(Actualizar.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (Exception ex) {
+                    Logger.getLogger(Actualizar.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                JOptionPane.showMessageDialog(null, "Se ha actualizado correctamente");
+                this.dispose();
             }
-            JOptionPane.showMessageDialog(null, "Se ha actualizado correctamente");
-            this.dispose();
         }
     }//GEN-LAST:event_jButton1ActionPerformed
 

@@ -57,9 +57,11 @@ public class Producto implements Serializable,Comparable<Producto> {
     @Basic(optional = false)
     @Column(name = "descripcion")
     private String descripcion;
+    //relacion de muchos a uno, quiere decir que un tipoProducto contiene muchos productos
     @JoinColumn(name = "codTipoProducto", referencedColumnName = "codTipoProducto")
     @ManyToOne(optional = false)
     private TipoProducto codTipoProducto;
+    //relacion de uno a muchos, un producto pertenece a varios detalleTicket
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "producto")
     private Collection<DetalleTicket> detalleTicketCollection;
 

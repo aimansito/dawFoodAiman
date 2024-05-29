@@ -256,6 +256,7 @@ public class Comprar extends javax.swing.JDialog {
         // TODO add your handling code here:
         ProductoJpaController prod = new ProductoJpaController();
         TipoProductoJpaController tipo = new TipoProductoJpaController();
+        int cantidad = 0;
         try {
             // Obtengo el id del producto seleccionado
             int fila = filaSeleccionadaJTable(this.jTable1);
@@ -298,7 +299,11 @@ public class Comprar extends javax.swing.JDialog {
                 return;
             }
 
-            int cantidad = Integer.parseInt(JOptionPane.showInputDialog("Introduce la cantidad que desea de: " + prod.findProducto(idProducto).getDescripcion()));
+            try{
+              cantidad = Integer.parseInt(JOptionPane.showInputDialog("Introduce la cantidad que desea de: " + prod.findProducto(idProducto).getDescripcion()));
+            }catch(NumberFormatException nfe){
+                JOptionPane.showMessageDialog(null, "Introduce un número");
+            }
             Producto p = new Producto(idProducto, iva, precio, stock, descripcion, tipoProd);
 
             if (cantidad > stock) {
@@ -316,14 +321,18 @@ public class Comprar extends javax.swing.JDialog {
 //                System.out.println(nombresYCantidades);
 //                this.carrito.setCarro(this.carritoMap);
 //                JOptionPane.showMessageDialog(null, "Se ha añadido el producto al carrito");
-            } else {
-                this.carritoMap.put(p, cantidad);
+            } else if (this.carritoMap.containsKey(p)) {
+                int cant = cantidad + this.carritoMap.get(p);
+                this.carritoMap.put(p, cant);
+
 //                for (Map.Entry<Producto, Integer> entry : this.carritoMap.entrySet()) {
 //                    int cantidadProducto = entry.getValue();
 //                    Producto producto = entry.getKey();
 //                    mensaje += "Producto: " + producto.getDescripcion() + ", Cantidad: " + cantidadProducto + "\n";
 //                }
 //                System.out.println(mensaje);
+            } else {
+                this.carritoMap.put(p, cantidad);
             }
 //                // Agregar el producto al carritoMap
 //                this.carritoMap.put(cantidad, p);
@@ -345,14 +354,13 @@ public class Comprar extends javax.swing.JDialog {
             JOptionPane.showMessageDialog(null, "Ha ocurrido un error al intentar mostrar los datos para editar: " + e.getMessage());
             System.out.println(e.getMessage());
         }
-        
 
 
     }//GEN-LAST:event_jButton5ActionPerformed
 
     private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
         // TODO add your handling code here:
-        new CarritoV(this, true,this.carritoMap).setVisible(true);
+        new CarritoV(this, true, this.carritoMap).setVisible(true);
     }//GEN-LAST:event_jButton6ActionPerformed
 
     public void cargarDatosJTable() {
@@ -411,8 +419,8 @@ public class Comprar extends javax.swing.JDialog {
     public Map<Producto, Integer> getMap() {
         return this.carritoMap;
     }
-    
-    public String getMensaje(){
+
+    public String getMensaje() {
         return this.mensaje;
     }
 

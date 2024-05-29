@@ -81,7 +81,6 @@ public class CarritoV extends javax.swing.JDialog {
         jPanel1 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
         jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
         jButton4 = new javax.swing.JButton();
         jButton5 = new javax.swing.JButton();
@@ -108,14 +107,7 @@ public class CarritoV extends javax.swing.JDialog {
                 jButton1ActionPerformed(evt);
             }
         });
-        jPanel1.add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 170, 150, 50));
-
-        jButton2.setBackground(new java.awt.Color(0, 0, 0));
-        jButton2.setFont(new java.awt.Font("Liberation Sans", 1, 15)); // NOI18N
-        jButton2.setForeground(new java.awt.Color(225, 166, 51));
-        jButton2.setText("BORRAR UN PRODUCTO");
-        jButton2.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(225, 166, 51)));
-        jPanel1.add(jButton2, new org.netbeans.lib.awtextra.AbsoluteConstraints(410, 170, 150, 50));
+        jPanel1.add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(240, 180, 150, 50));
 
         jButton3.setBackground(new java.awt.Color(255, 0, 0));
         jButton3.setFont(new java.awt.Font("Liberation Sans", 1, 15)); // NOI18N
@@ -127,7 +119,7 @@ public class CarritoV extends javax.swing.JDialog {
                 jButton3ActionPerformed(evt);
             }
         });
-        jPanel1.add(jButton3, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 430, 100, 30));
+        jPanel1.add(jButton3, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 330, 100, 30));
 
         jButton4.setBackground(new java.awt.Color(0, 0, 0));
         jButton4.setFont(new java.awt.Font("Liberation Sans", 1, 15)); // NOI18N
@@ -139,7 +131,7 @@ public class CarritoV extends javax.swing.JDialog {
                 jButton4ActionPerformed(evt);
             }
         });
-        jPanel1.add(jButton4, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 324, 140, 50));
+        jPanel1.add(jButton4, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 180, 140, 50));
 
         jButton5.setBackground(new java.awt.Color(0, 0, 0));
         jButton5.setFont(new java.awt.Font("Liberation Sans", 1, 15)); // NOI18N
@@ -151,7 +143,7 @@ public class CarritoV extends javax.swing.JDialog {
                 jButton5ActionPerformed(evt);
             }
         });
-        jPanel1.add(jButton5, new org.netbeans.lib.awtextra.AbsoluteConstraints(410, 324, 150, 50));
+        jPanel1.add(jButton5, new org.netbeans.lib.awtextra.AbsoluteConstraints(440, 180, 150, 50));
 
         jLabel1.setText("jLabel1");
         jPanel1.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 660, 590));
@@ -210,7 +202,11 @@ public class CarritoV extends javax.swing.JDialog {
 //        Ticket ticket  = new Ticket(numPedido,importeTotal,fechaActual,tpv1);
 //        t.create(ticket);
 //        System.out.println(ticket);
-        new Pago(this, true, padre.getMap()).setVisible(true);
+        if(padre.getMap().isEmpty()){
+            JOptionPane.showMessageDialog(null,"No hay productos en el carrito");
+        }else{
+            new Pago(this, true, padre.getMap()).setVisible(true);
+        }
     }//GEN-LAST:event_jButton5ActionPerformed
     public BigDecimal calcularImporteTotal() {
         BigDecimal total = BigDecimal.ZERO;
@@ -285,7 +281,6 @@ public class CarritoV extends javax.swing.JDialog {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
     private javax.swing.JButton jButton5;

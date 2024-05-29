@@ -18,6 +18,8 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Month;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.time.temporal.TemporalAccessor;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -55,8 +57,8 @@ public class Pago extends javax.swing.JDialog {
         this.carrito = parent;
         this.setLocationRelativeTo(null);
         this.productos = map;
-        this.tarjeta = new Tarjeta("Aiman", 3041, LocalDate.of(2029, 5, 5), 433, 2100.00);
-        mostrarDatosEditar();
+        this.tarjeta = new Tarjeta("Aiman", 3041, "12/12/2029", 433, 2100.00);
+//        mostrarDatosEditar();
         this.nuevoStock = 0;
     }
 
@@ -168,46 +170,45 @@ public class Pago extends javax.swing.JDialog {
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
         // Comparación de las fechas
-        TicketJpaController t = new TicketJpaController();
-        TpvJpaController tpv = new TpvJpaController();
-        Tpv tpv1 = tpv.findTpv(1);
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-//
-//        try {
-//            // Convertir el texto del jTextField3 a un objeto Date
-//            Date fechaIngresada = dateFormat.parse(jTextField3.getText());
-//
-//            // Obtener la fecha de vencimiento de la tarjeta
-//            Date fechaTarjeta = tarjeta.getFechaVencimiento();
+        try {
+            String nombreTitular = jTextField1.getText();
+            int numeroTarjeta = Integer.parseInt(jTextField2.getText());
+            int cvv = Integer.parseInt(jTextField4.getText());
 
-//            // Comparar las fechas
-//            if (fechaIngresada.equals(fechaTarjeta)) {
-        // Acción a realizar si las fechas son iguales
-        JOptionPane.showMessageDialog(null, "El pago se realizó con éxito");
-        if (jTextField1.getText().equalsIgnoreCase(tarjeta.getNombreTitular()) || (Integer.parseInt(jTextField2.getText())) == (tarjeta.getNumeroTarjeta()) || Integer.parseInt(jTextField4.getText()) == tarjeta.getCVV()) {
-            try {
+//            DateTimeFormatter dtf = DateTimeFormatter.ofPattern("uuuu/MM", Locale.ENGLISH);
+//            LocalDate fechaVencimientoFormulario = LocalDate.parse(jTextField3.getText(), dtf);
+//            Date fechaVencimientoTarjeta = tarjeta.getFechaVencimiento();
+            if (!nombreTitular.equalsIgnoreCase(tarjeta.getNombreTitular())) {
+                JOptionPane.showMessageDialog(null, "Nombre del titular incorrecto");
+            } else if (!(numeroTarjeta == tarjeta.getNumeroTarjeta())) {
+                JOptionPane.showMessageDialog(null, "Número de tarjeta incorrecto");
+            } else if (!(cvv == tarjeta.getCVV())) {
+                JOptionPane.showMessageDialog(null, "CVV incorrecto");
+            } else if (jTextField3.getText().equals(tarjeta.getFechaVencimiento())) {
 
+                JOptionPane.showMessageDialog(null, "Fecha inválida");
+            } else {
                 Ticket ticket = crearTicket();
                 int idTicket = ticket.getIdTicket();
                 System.out.println(idTicket);
                 crearDetalleTicket(idTicket);
-            } catch (Exception ex) {
-                Logger.getLogger(Pago.class.getName()).log(Level.SEVERE, null, ex);
+
+                JOptionPane.showMessageDialog(null, "El pago se realizó con éxito");
             }
-        } else {
-            JOptionPane.showMessageDialog(null, "Datos incorrectos");
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(null, "Error en el formato de los datos numéricos: " + e.getMessage());
+        } catch (DateTimeParseException e) {
+            JOptionPane.showMessageDialog(null, "Error al analizar la fecha: " + e.getMessage());
+        } catch (Exception ex) {
+            Logger.getLogger(Pago.class.getName()).log(Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(null, "Ha ocurrido un error al intentar realizar el pago: " + ex.getMessage());
         }
-//            } else {
-//                
-//                JOptionPane.showMessageDialog(null, "Las fechas no son iguales");
-//            }
-//        } catch (ParseException e) {
-//            JOptionPane.showMessageDialog(null, "Fecha inválida, por favor use el formato dd/MM/yyyy");
-//        }
+
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // TODO add your handling code here:
+        this.dispose();
     }//GEN-LAST:event_jButton2ActionPerformed
     public Ticket crearTicket() throws Exception {
         // Obtener la fecha actual y otros datos necesarios
@@ -279,26 +280,44 @@ public class Pago extends javax.swing.JDialog {
         return lista;
     }
 
-    private void mostrarDatosEditar() {
-        try {
-            LocalDate date = tarjeta.getFechaVencimiento();
-            final DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd.MMMM uuuu", Locale.ENGLISH);
-            String fecha = dtf.format(date);
-
-            // Llena los campos del formulario con los datos del producto
-            jTextField1.setText(tarjeta.getNombreTitular());
-            jTextField1.setBackground(Color.GRAY);
-            jTextField2.setText(String.valueOf(tarjeta.getNumeroTarjeta()));
-            jTextField3.setText(fecha);
-            jTextField4.setText(String.valueOf(tarjeta.getCVV()));
-
-        } catch (ArrayIndexOutOfBoundsException e) {
-            JOptionPane.showMessageDialog(null, "Error se ha salido del array.");
+//    private void mostrarDatosEditar() {
+//        try {
+//            Date date = tarjeta.getFechaVencimiento();
+//            if (date == null) {
+//                throw new NullPointerException("La fecha de vencimiento es nula.");
+//            }
+//
+//            final DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd.MMMM uuuu", Locale.ENGLISH);
+//            String fecha = dtf.format((TemporalAccessor) date);
+//
+//            // Llena los campos del formulario con los datos del producto
+//            jTextField1.setText(tarjeta.getNombreTitular());
+//            jTextField1.setBackground(Color.GRAY);
+//            jTextField2.setText(String.valueOf(tarjeta.getNumeroTarjeta()));
+//            jTextField3.setText(fecha);
+//            jTextField4.setText(String.valueOf(tarjeta.getCVV()));
+//
+//        } catch (NullPointerException e) {
+//            JOptionPane.showMessageDialog(null, "Error: " + e.getMessage());
+//        } catch (DateTimeParseException e) {
+//            JOptionPane.showMessageDialog(null, "Introduce una fecha válida");
+//        } catch (ArrayIndexOutOfBoundsException e) {
+//            JOptionPane.showMessageDialog(null, "Se ha salido del array.");
 //        } catch (Exception e) {
 //            JOptionPane.showMessageDialog(null, "Ha ocurrido un error al intentar mostrar los datos para editar: " + e.getMessage());
-        }
-    }
+//        }
+//    }
 
+    private static Date parsearDate(String fecha) {
+        SimpleDateFormat formato = new SimpleDateFormat("yyyy-MM-dd");
+        Date fechaParseada = null;
+        try {
+            fechaParseada = formato.parse(fecha);
+        } catch (ParseException e) {
+            JOptionPane.showMessageDialog(null, "La fecha introducida no es correcta");
+        }
+        return fechaParseada;
+    }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;

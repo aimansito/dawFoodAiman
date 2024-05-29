@@ -46,6 +46,7 @@ import javax.xml.bind.annotation.XmlTransient;
 public class Ticket implements Serializable {
 
     private static final long serialVersionUID = 1L;
+    // clave primaria
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
@@ -62,9 +63,11 @@ public class Ticket implements Serializable {
     @Column(name = "fechaHora")
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaHora;
+    //relacion de uno a muchos un tpv contiene muchos tickets
     @JoinColumn(name = "idTPV", referencedColumnName = "idTPV")
     @ManyToOne(optional = false)
     private Tpv idTPV;
+    //relacion de uno a muchos quiere decir que un ticket pertenece a varios detalleTicket
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "ticket")
     private Collection<DetalleTicket> detalleTicketCollection;
 

@@ -20,13 +20,13 @@ import models.TipoProducto;
  */
 public class AñadirProd extends javax.swing.JDialog {
 
-    private Crud crud ;
-    
+    private Crud crud;
+
     /**
      * Creates new form AñadirProd
      */
     public AñadirProd(Crud parent, boolean modal) {
-        super(parent,modal);
+        super(parent, modal);
         crud = parent;
         initComponents();
     }
@@ -88,6 +88,11 @@ public class AñadirProd extends javax.swing.JDialog {
         });
 
         jButton2.setText("Cancelar");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -147,6 +152,7 @@ public class AñadirProd extends javax.swing.JDialog {
 
     private void jTextField2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField2ActionPerformed
         // TODO add your handling code here:
+        this.dispose();
     }//GEN-LAST:event_jTextField2ActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
@@ -155,14 +161,37 @@ public class AñadirProd extends javax.swing.JDialog {
         TipoProductoJpaController tipoProd = new TipoProductoJpaController();
         String tipo = jComboBox2.getSelectedItem().toString();
         TipoProducto tProd = tipoProd.getTipoProductoPorNombre(tipo);
-        String iva = (String) jComboBox1.getSelectedItem().toString();
-        BigDecimal precio = new BigDecimal(jTextField1.getText());
-        Producto p1 = new Producto(iva,precio,Integer.parseInt(jTextField2.getText()),jTextField3.getText(),tProd);
+        String iva = jComboBox1.getSelectedItem().toString();
+        BigDecimal precio = BigDecimal.ZERO;
+        int stock = 0;
+
+
+        try {
+            stock = Integer.parseInt(jTextField2.getText());
+            precio = new BigDecimal(jTextField1.getText()).abs();
+        } catch (NumberFormatException nfe) {
+            JOptionPane.showMessageDialog(null, "Introduce un número válido para los campos");
+            return; // Salir del método si los datos no son válidos
+        } catch (NullPointerException npe) {
+            JOptionPane.showMessageDialog(null, "No se ha introducido ningún dato");
+            return; // Salir del método si los datos no son válidos
+        }
+
+        Producto p1 = new Producto(iva, precio, Math.abs(stock), jTextField3.getText(), tProd);
         crud.getListaProductos();
-        prod.create(p1);
+        if(jTextField3.getText().isEmpty()){
+            JOptionPane.showMessageDialog(null, "No has rellenado la descripcion");
+        }else{
+            prod.create(p1);
+        }
         crud.cargarDatosJTable();
         this.dispose();
     }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        // TODO add your handling code here:
+        this.dispose();
+    }//GEN-LAST:event_jButton2ActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

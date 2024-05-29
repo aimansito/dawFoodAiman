@@ -17,13 +17,13 @@ public class Tarjeta {
      // Declaración de atributos
     private String nombreTitular;
     private int numeroTarjeta;
-    private LocalDate fechaVencimiento;
+    private String fechaVencimiento;
     private int CVV;
     private double saldoTarjeta;
     private static Random random = new Random();
 
     // Constructor con parámetros
-    public Tarjeta(String nombreTitular, int numeroTarjeta, LocalDate fechaVencimiento, int CVV, double saldoTarjeta) {
+    public Tarjeta(String nombreTitular, int numeroTarjeta, String fechaVencimiento, int CVV, double saldoTarjeta) {
         this.nombreTitular = nombreTitular;
         this.numeroTarjeta = numeroTarjeta;
         this.fechaVencimiento = fechaVencimiento;
@@ -69,7 +69,7 @@ public class Tarjeta {
         return numeroTarjeta;
     }
 
-    public LocalDate getFechaVencimiento() {
+    public String getFechaVencimiento() {
         return fechaVencimiento;
     }
 
@@ -107,7 +107,7 @@ public class Tarjeta {
         this.numeroTarjeta = numeroTarjeta;
     }
 
-    public void setFechaVencimiento(LocalDate fechaVencimiento) {
+    public void setFechaVencimiento(String fechaVencimiento) {
         this.fechaVencimiento = fechaVencimiento;
     }
 
